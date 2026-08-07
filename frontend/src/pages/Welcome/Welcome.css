@@ -1,0 +1,121 @@
+.welcome-shell {
+  align-items: center;
+}
+
+.hero-stack {
+  width: min(100%, 64rem);
+}
+
+.welcome-card {
+  padding: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.16);
+  color: #bae6fd;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-copy h1 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+  line-height: 1.06;
+}
+
+.hero-copy p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 1rem;
+}
+
+.hero-visual {
+  position: relative;
+  min-height: 11rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(88, 28, 135, 0.75));
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(16px);
+  opacity: 0.75;
+  animation: float 5s ease-in-out infinite;
+}
+
+.orb-one {
+  width: 9rem;
+  height: 9rem;
+  background: rgba(99, 102, 241, 0.7);
+  top: -1.2rem;
+  left: -1rem;
+}
+
+.orb-two {
+  width: 8rem;
+  height: 8rem;
+  background: rgba(34, 211, 238, 0.5);
+  bottom: -1.5rem;
+  right: -1rem;
+  animation-delay: 1s;
+}
+
+.dashboard-preview {
+  position: relative;
+  z-index: 1;
+  width: min(90%, 15rem);
+  padding: 1rem;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: grid;
+  gap: 0.7rem;
+}
+
+.preview-bar {
+  height: 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+}
+
+.preview-block {
+  height: 3.2rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.preview-block.short {
+  height: 2rem;
+  width: 70%;
+}
+
+.action-stack {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}

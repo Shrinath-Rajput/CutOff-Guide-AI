@@ -1,0 +1,25 @@
+.otp-group {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.otp-box {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.otp-box:focus {
+  border-color: rgba(34, 211, 238, 0.65);
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.16);
+}
