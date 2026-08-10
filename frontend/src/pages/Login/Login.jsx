@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiMail, FiPhone, FiUser } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { auth, createRecaptchaVerifier, sendOtpToPhone } from '../../services/firebase';
+import { sendOtp } from '../../services/api';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Input from '../../components/Input/Input';
@@ -44,17 +44,16 @@ const Login = () => {
     const phoneNumber = `+91${form.phone}`;
 
     try {
-      if (window.recaptchaVerifier?.clear) {
-        window.recaptchaVerifier.clear();
+      const response = await sendOtp({
+        name: form.fullName.trim(),
+        email: form.email.trim(),
+        phone: phoneNumber,
+      });
+
+      if (response?.status !== 'success') {
+        throw new Error(response?.message || 'Unable to send OTP. Please try again.');
       }
 
-      const verifier = createRecaptchaVerifier('recaptcha-container', auth);
-      if (!verifier) {
-        throw new Error('Unable to initialize phone verification');
-      }
-
-      const confirmationResult = await sendOtpToPhone(phoneNumber, verifier);
-      window.confirmationResult = confirmationResult;
       sessionStorage.setItem(
         'auth_pending_user',
         JSON.stringify({
@@ -63,20 +62,17 @@ const Login = () => {
         })
       );
       sessionStorage.setItem('auth_pending_phone', phoneNumber);
+      if (response?.sessionId) {
+        sessionStorage.setItem('auth_pending_otp_session_id', response.sessionId);
+      }
+
       toast.success('OTP sent successfully');
       navigate('/otp');
     } catch (error) {
       console.error('OTP send error', error);
       const errorMessage =
-        error?.code === 'auth/invalid-phone-number'
-          ? 'Invalid phone number'
-          : error?.message || 'Unable to send OTP. Please try again.';
+        error?.response?.data?.message || error?.message || 'Unable to send OTP. Please try again.';
       toast.error(errorMessage);
-      if (window.recaptchaVerifier?.clear) {
-        window.recaptchaVerifier.clear();
-      }
-      window.recaptchaVerifier = null;
-      window.confirmationResult = null;
     } finally {
       setIsSending(false);
     }
@@ -122,7 +118,6 @@ const Login = () => {
             error={errors.phone}
           />
 
-          <div id="recaptcha-container" style={{ display: 'none' }} />
           <Button variant="primary" fullWidth type="submit" disabled={isSending}>
             {isSending ? 'Sending OTP...' : 'Send OTP'}
           </Button>

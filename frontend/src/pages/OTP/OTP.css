@@ -27,6 +27,12 @@
   cursor: not-allowed;
 }
 
+.form-error {
+  color: #dc2626;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
 @media (max-width: 640px) {
   .otp-card {
     width: 100%;

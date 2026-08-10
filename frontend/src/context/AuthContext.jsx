@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { registerUser as registerUserApi } from '../services/api';
-import { signOutUser } from '../services/firebase';
 
 const AuthContext = createContext(null);
 
@@ -23,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = (user, token) => {
     const normalizedUser = {
-      uid: user.uid || 'guest-user',
+      uid: user.uid || 'user',
       name: user.name || 'User',
       email: user.email || '',
       phone: user.phone || '',
@@ -43,23 +42,12 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
 
-  const logout = async () => {
-    try {
-      await signOutUser();
-    } catch (error) {
-      console.warn('Firebase logout warning', error);
-    }
-
+  const logout = () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
     sessionStorage.removeItem('auth_pending_user');
     sessionStorage.removeItem('auth_pending_phone');
-
-    if (window.recaptchaVerifier?.clear) {
-      window.recaptchaVerifier.clear();
-    }
-    window.recaptchaVerifier = null;
-    window.confirmationResult = null;
+    sessionStorage.removeItem('auth_pending_otp_session_id');
 
     setCurrentUser(null);
     setIsAuthenticated(false);

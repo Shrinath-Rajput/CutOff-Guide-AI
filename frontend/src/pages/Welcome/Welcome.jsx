@@ -1,55 +1,16 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FiPhone, FiUser, FiChrome, FiCpu, FiBookOpen, FiZap } from 'react-icons/fi';
-import toast from 'react-hot-toast';
-import { signInWithGooglePopup } from '../../services/firebase';
+import { FiPhone, FiChrome, FiCpu, FiBookOpen, FiZap } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
-import { useAuth } from '../../context/AuthContext';
 import './Welcome.css';
 
 const Welcome = () => {
   const navigate = useNavigate();
-  const { registerAndLogin, login } = useAuth();
 
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithGooglePopup();
-      const user = result.user;
-      const userPayload = {
-        uid: user.uid,
-        name: user.displayName || 'Google User',
-        email: user.email || '',
-        phone: user.phoneNumber || '',
-        provider: 'google',
-        photoURL: user.photoURL || '',
-      };
-
-      await registerAndLogin(userPayload);
-      toast.success('Google login successful');
-      navigate('/home');
-    } catch (error) {
-      console.error('Google login error', error);
-      if (error?.code === 'auth/popup-closed-by-user') {
-        toast.error('Google sign-in was cancelled');
-      } else {
-        toast.error('Unable to sign in with Google. Please try again.');
-      }
-    }
-  };
-
-  const handleGuestLogin = () => {
-    const guestUser = {
-      uid: 'guest-user',
-      name: 'Guest',
-      email: '',
-      phone: '',
-      provider: 'guest',
-      photoURL: '',
-    };
-    login(guestUser, null);
-    toast.success('Logged in as Guest');
-    navigate('/home');
+  const handleGoogleLogin = () => {
+    const backendUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    window.location.href = `${backendUrl}/api/auth/google`;
   };
 
   return (
@@ -119,9 +80,6 @@ const Welcome = () => {
             </Button>
             <Button variant="secondary" fullWidth icon={<FiPhone />} onClick={() => navigate('/login')}>
               Continue with Phone
-            </Button>
-            <Button variant="ghost" fullWidth icon={<FiUser />} onClick={handleGuestLogin}>
-              Continue as Guest
             </Button>
           </div>
         </Card>

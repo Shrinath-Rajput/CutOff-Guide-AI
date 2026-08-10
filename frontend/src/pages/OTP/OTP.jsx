@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { auth, createRecaptchaVerifier, sendOtpToPhone } from '../../services/firebase';
+import { sendOtp, verifyOtp } from '../../services/api';
 import Button from '../../components/Button/Button';
 import Card from '../../components/Card/Card';
 import Navbar from '../../components/Navbar/Navbar';
@@ -11,14 +11,16 @@ import './OTP.css';
 
 const OTP = () => {
   const navigate = useNavigate();
-  const { registerAndLogin } = useAuth();
+  const { login } = useAuth();
   const [otp, setOtp] = useState('');
+  const [error, setError] = useState('');
   const [timer, setTimer] = useState(30);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
 
   const pendingUser = sessionStorage.getItem('auth_pending_user');
   const pendingPhone = sessionStorage.getItem('auth_pending_phone');
+  const pendingOtpSessionId = sessionStorage.getItem('auth_pending_otp_session_id');
   const parsedUser = pendingUser ? JSON.parse(pendingUser) : null;
 
   useEffect(() => {
@@ -34,37 +36,38 @@ const OTP = () => {
   }, [timer]);
 
   const handleVerify = async () => {
-    if (otp.length !== 6 || !window.confirmationResult) {
-      toast.error('Invalid OTP');
+    if (otp.length !== 6) {
+      setError('Enter a valid 6-digit OTP');
       return;
     }
 
     setIsVerifying(true);
 
     try {
-      const credential = await window.confirmationResult.confirm(otp);
-      const firebaseUser = credential.user;
-      const userPayload = {
-        uid: firebaseUser.uid,
-        name: parsedUser?.name || firebaseUser.displayName || 'User',
-        email: parsedUser?.email || firebaseUser.email || '',
-        phone: pendingPhone || firebaseUser.phoneNumber || '',
-        provider: 'phone',
-        photoURL: firebaseUser.photoURL || '',
-      };
+      const response = await verifyOtp({
+        phone: pendingPhone,
+        otp,
+        name: parsedUser?.name || '',
+        email: parsedUser?.email || '',
+        sessionId: pendingOtpSessionId,
+      });
 
-      await registerAndLogin(userPayload);
+      const backendUser = response?.user;
+      const token = response?.token;
+
+      if (!backendUser || !token) {
+        throw new Error(response?.message || 'OTP verification failed');
+      }
+
+      login(backendUser, token);
       toast.success('Phone login successful');
       navigate('/home');
     } catch (error) {
       console.error('OTP verify error', error);
-      if (error?.code === 'auth/invalid-verification-code') {
-        toast.error('Invalid OTP. Please try again.');
-      } else if (error?.code === 'auth/code-expired') {
-        toast.error('OTP has expired. Please request a new code.');
-      } else {
-        toast.error(error?.message || 'Unable to verify OTP. Please try again.');
-      }
+      const errorMessage =
+        error?.response?.data?.message || error?.message || 'Unable to verify OTP. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsVerifying(false);
     }
@@ -73,22 +76,49 @@ const OTP = () => {
   const handleResend = async () => {
     if (timer > 0 || isResending || !pendingPhone) return;
     setIsResending(true);
+    setError('');
 
     try {
-      if (window.recaptchaVerifier?.clear) {
-        window.recaptchaVerifier.clear();
+      const response = await sendOtp({
+        name: parsedUser?.name || '',
+        email: parsedUser?.email || '',
+        phone: pendingPhone,
+      });
+
+      if (response?.status !== 'success') {
+        throw new Error(response?.message || 'Unable to resend OTP. Please try again.');
       }
-      const verifier = createRecaptchaVerifier('recaptcha-container', auth);
-      const confirmationResult = await sendOtpToPhone(pendingPhone, verifier);
-      window.confirmationResult = confirmationResult;
+
+      if (response?.sessionId) {
+        sessionStorage.setItem('auth_pending_otp_session_id', response.sessionId);
+      }
       setTimer(30);
       toast.success('OTP sent successfully');
     } catch (error) {
       console.error('OTP resend error', error);
-      toast.error('Unable to resend OTP. Please try again.');
+      const errorMessage =
+        error?.response?.data?.message || error?.message || 'Unable to resend OTP. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsResending(false);
     }
+  };
+
+  const handleOtpChange = (value) => {
+    setError('');
+    setOtp(value);
+  };
+
+  const maskPhone = (phone) => {
+    if (!phone) return '';
+    // Expect +91XXXXXXXXXX
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length >= 10) {
+      const last4 = digits.slice(-4);
+      return `+91 XXXXX ${last4}`;
+    }
+    return phone;
   };
 
   return (
@@ -96,11 +126,13 @@ const OTP = () => {
       <Card className="auth-card otp-card">
         <Navbar title="Verify OTP" backTo="/login" />
         <div className="auth-heading">
-          <h2>Enter the 6-digit code</h2>
-          <p>We sent a secure verification code to your phone.</p>
+          <h2>Verify your phone number</h2>
+          <p>Enter the 6-digit OTP sent to {maskPhone(pendingPhone)}</p>
         </div>
 
-        <OTPinput value={otp} onChange={setOtp} />
+        <OTPinput value={otp} onChange={handleOtpChange} />
+
+        {error && <div className="form-error">{error}</div>}
 
         <div className="otp-meta">
           <span>Resend in 00:{timer < 10 ? `0${timer}` : timer}</span>
@@ -109,12 +141,11 @@ const OTP = () => {
           </button>
         </div>
 
-        <div id="recaptcha-container" style={{ display: 'none' }} />
         <Button variant="primary" fullWidth onClick={handleVerify} disabled={isVerifying}>
           {isVerifying ? 'Verifying...' : 'Verify'}
         </Button>
         <Button variant="ghost" fullWidth onClick={() => navigate('/login')}>
-          Back
+          Change phone number
         </Button>
       </Card>
     </div>

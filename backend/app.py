@@ -9,7 +9,14 @@ from utils.logger import configure_logging
 def create_app() -> Flask:
     configure_logging()
     app = Flask(__name__)
-    CORS(app)
+    CORS(
+        app,
+        origins=[
+            'http://localhost:5173',
+            'http://localhost:5174',
+        ],
+        supports_credentials=True,
+    )
     register_routes(app)
     return app
 
