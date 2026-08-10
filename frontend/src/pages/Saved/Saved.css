@@ -1,0 +1,32 @@
+.saved-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.saved-card {
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 48px rgba(17, 17, 17, 0.05);
+}
+
+.saved-card h3 {
+  margin: 0 0 0.75rem;
+  color: var(--text);
+}
+
+.saved-card p,
+.saved-card span {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .saved-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,124 @@
+.site-footer {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 2rem;
+  color: var(--text-secondary);
+  background: var(--background-soft);
+}
+
+.footer-widgets {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(160px, 1fr));
+  gap: 2rem;
+  padding-bottom: 2.6rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.footer-brand {
+  display: grid;
+  gap: 1rem;
+}
+
+.footer-logo {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: var(--accent);
+  color: white;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.footer-brand h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.footer-brand p {
+  margin: 0;
+  color: var(--text-secondary);
+  max-width: 26rem;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
+.footer-links a,
+.footer-contact p,
+.footer-contact a {
+  display: block;
+  color: var(--text-secondary);
+  margin-bottom: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover,
+.footer-contact a:hover {
+  color: var(--accent);
+}
+
+.footer-contact p {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.85rem;
+}
+
+.footer-contact a {
+  color: inherit;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.footer-socials a:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .footer-widgets {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -7,48 +7,46 @@
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(125, 211, 252, 0.24), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.24), transparent 30%),
-    linear-gradient(135deg, #020617 0%, #0f172a 45%, #111827 100%);
+  background: radial-gradient(circle at top left, rgba(191, 134, 252, 0.24), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.18), transparent 26%),
+    linear-gradient(135deg, #f7f3ff 0%, #ede9fe 55%, #e9d5ff 100%);
 }
 
 .page-shell::before,
 .page-shell::after {
   content: '';
   position: absolute;
-  inset: auto;
-  width: 23rem;
-  height: 23rem;
+  width: 24rem;
+  height: 24rem;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.34;
+  filter: blur(70px);
+  opacity: 0.3;
   pointer-events: none;
 }
 
 .page-shell::before {
-  top: -3rem;
-  right: -6rem;
-  background: #6366f1;
+  top: -4rem;
+  right: -5rem;
+  background: rgba(124, 58, 237, 0.22);
 }
 
 .page-shell::after {
-  bottom: -4rem;
-  left: -6rem;
-  background: #22d3ee;
+  bottom: -5rem;
+  left: -5rem;
+  background: rgba(191, 132, 252, 0.24);
 }
 
 .glass-panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 34rem);
+  width: min(100%, 32rem);
   padding: 2rem;
-  border-radius: 2rem;
-  background: rgba(10, 15, 35, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 22px 100px rgba(2, 6, 23, 0.46);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(124, 58, 237, 0.14);
+  box-shadow: 0 24px 80px rgba(124, 58, 237, 0.14);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   text-align: center;
 }
 
@@ -56,31 +54,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .splash-logo {
-  width: 5.4rem;
-  height: 5.4rem;
-  border-radius: 1.4rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 22px;
   display: grid;
   place-items: center;
   font-size: 2rem;
   color: white;
-  background: linear-gradient(135deg, #8b5cf6, #22d3ee 70%);
-  box-shadow: 0 15px 40px rgba(34, 211, 238, 0.28);
+  background: linear-gradient(135deg, #7b2ff7 0%, #a855f7 100%);
+  box-shadow: 0 20px 50px rgba(123, 47, 247, 0.3);
 }
 
 .splash-card h1 {
-  font-size: clamp(1.65rem, 3vw, 2.3rem);
-  font-weight: 700;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
   margin: 0;
-  color: #f8fafc;
+  color: #2e2157;
 }
 
 .splash-card p {
   margin: 0;
-  color: #cbd5e1;
+  color: #5b21b6;
   font-size: 1rem;
-  max-width: 24rem;
+  max-width: 26rem;
 }

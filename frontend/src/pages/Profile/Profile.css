@@ -1,16 +1,26 @@
-.profile-shell { min-height: 100vh; }
-
 .profile-card {
   display: grid;
-  gap: 12px;
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(124, 58, 237, 0.14);
+  box-shadow: 0 22px 60px rgba(124, 58, 237, 0.08);
+}
+
+.profile-card > div {
+  display: grid;
+  gap: 0.3rem;
 }
 
 .profile-card strong {
-  display: block;
-  margin-bottom: 4px;
+  font-size: 0.95rem;
+  color: #5b21b6;
+}
+
+.profile-card p {
+  margin: 0;
+  color: #2e2157;
+  font-size: 1rem;
 }

@@ -1,128 +1,112 @@
-import { motion } from 'framer-motion';
-import { FiSearch, FiCompass, FiBell, FiBookOpen, FiHeart, FiClock, FiZap, FiMapPin } from 'react-icons/fi';
+import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiAward, FiShield, FiBarChart2 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
-import Button from '../../components/Button/Button';
-import Card from '../../components/Card/Card';
-import Navbar from '../../components/Navbar/Navbar';
+import MainLayout from '../../components/MainLayout/MainLayout';
+import SectionHeader from '../../components/SectionHeader/SectionHeader';
+import CollegeCard from '../../components/CollegeCard/CollegeCard';
 import './Home.css';
 
-const featuredColleges = [
-  { name: 'VJTI Mumbai', tag: 'Computer Engineering' },
-  { name: 'COEP Technological University', tag: 'Mechanical' },
-  { name: 'Pict Pune', tag: 'AI & DS' },
+const heroStats = [
+  { label: 'Colleges', value: '250+' },
+  { label: 'Predictions', value: '12K+' },
+  { label: 'Success rate', value: '94%' },
 ];
 
-const quickActions = [
-  { title: 'AI shortlist', icon: <FiCompass /> },
-  { title: 'Saved colleges', icon: <FiHeart /> },
-  { title: 'Recent searches', icon: <FiClock /> },
+const popularColleges = [
+  { id: 'vkti-mumbai', name: 'VJTI Mumbai', location: 'Mumbai, MH', category: 'Engineering', courses: ['Computer Eng.'], fees: '₹1.2L/yr', cutoff: '178', rating: '4.7' },
+  { id: 'coep-pune', name: 'COEP Pune', location: 'Pune, MH', category: 'Engineering', courses: ['Mechanical'], fees: '₹1.1L/yr', cutoff: '182', rating: '4.6' },
+  { id: 'pict-pune', name: 'PICT Pune', location: 'Pune, MH', category: 'Engineering', courses: ['AI & DS'], fees: '₹1.4L/yr', cutoff: '176', rating: '4.4' },
 ];
+
+const courses = ['Artificial Intelligence', 'Data Science', 'Computer Engineering', 'Mechanical', 'Electronics'];
 
 const Home = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+
+  const filteredColleges = useMemo(
+    () => popularColleges.filter((college) => college.name.toLowerCase().includes(search.toLowerCase()) || college.location.toLowerCase().includes(search.toLowerCase())),
+    [search]
+  );
 
   return (
-    <div className="page-shell home-shell">
-      <Card className="home-card">
-        <Navbar title="Premium Home" backTo="/welcome" />
-
-        <div className="home-hero">
-          <div>
-            <p className="eyebrow">Welcome back</p>
-            <h2>Hello, {currentUser?.name || 'Student'} 👋</h2>
-            <p>Your AI admission journey is ready. Discover the next best college with confidence.</p>
+    <MainLayout>
+      <section className="home-hero-section">
+        <div className="hero-copy">
+          <span className="hero-eyebrow">Premium college admission guidance</span>
+          <h1>Find the right college for your future.</h1>
+          <p>CutOff Guide AI blends admissions expertise with intelligent cutoff predictions to help you make confident choices.</p>
+          <div className="hero-actions">
+            <button type="button" className="button-primary" onClick={() => navigate('/colleges')}>Explore Colleges</button>
+            <button type="button" className="button-secondary" onClick={() => navigate('/cutoff')}>Predict My Cutoff</button>
           </div>
-          <div className="hero-badge">
-            <FiZap /> Premium Access
+          <div className="hero-stats">
+            {heroStats.map((item) => (
+              <div key={item.label} className="hero-stat">
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
+        <div className="hero-visual" />
+      </section>
 
-        <motion.div className="search-bar" whileHover={{ scale: 1.01 }}>
-          <FiSearch />
-          <input placeholder="Search colleges, branches, or cities" />
-          <Button variant="primary">Search</Button>
-        </motion.div>
-
-        <div className="home-grid">
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Continue where you left</h3>
-              <span>Resume</span>
-            </div>
-            <div className="resume-chip">MHT CET Engineering • Round 1</div>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Featured colleges</h3>
-              <span>Trending</span>
-            </div>
-            <ul>
-              {featuredColleges.map((college) => (
-                <li key={college.name}>
-                  <strong>{college.name}</strong>
-                  <span>{college.tag}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Latest notifications</h3>
-              <span><FiBell /></span>
-            </div>
-            <p>Cutoff updates for Computer Engineering in Pune are now live.</p>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Top courses</h3>
-              <span>Popular</span>
-            </div>
-            <div className="chips">
-              <span>Artificial Intelligence</span>
-              <span>Data Science</span>
-              <span>Mechanical</span>
-            </div>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Quick actions</h3>
-              <span>Fast</span>
-            </div>
-            <div className="quick-actions">
-              {quickActions.map((action) => (
-                <div key={action.title} className="quick-action">
-                  {action.icon}
-                  <span>{action.title}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Saved colleges</h3>
-              <span><FiHeart /></span>
-            </div>
-            <p>No colleges saved yet. Start exploring and save your favourites.</p>
-          </section>
-
-          <section className="panel">
-            <div className="panel-heading">
-              <h3>Recent searches</h3>
-              <span><FiClock /></span>
-            </div>
-            <div className="recent-searches">
-              <span><FiMapPin /> Pune engineering colleges</span>
-              <span><FiBookOpen /> B.Tech AI colleges</span>
-            </div>
-          </section>
+      <section className="section-panel section-light">
+        <SectionHeader title={`Welcome back, ${currentUser?.name?.split(' ')[0] || 'Student'}`} description="Continue your admission planning with curated insights and fast access to top tools." />
+        <div className="home-actions-grid">
+          <div className="action-card">
+            <FiAward />
+            <h3>Saved colleges</h3>
+            <p>Your personalized shortlist for fast review.</p>
+          </div>
+          <div className="action-card">
+            <FiBarChart2 />
+            <h3>Predict cutoffs</h3>
+            <p>Estimate your best college matches in one step.</p>
+          </div>
+          <div className="action-card">
+            <FiShield />
+            <h3>Admission guidance</h3>
+            <p>Get reliable advice on CAP rounds and eligibility.</p>
+          </div>
         </div>
-      </Card>
-    </div>
+      </section>
+
+      <section className="section-panel">
+        <SectionHeader title="Popular Colleges" description="Explore top institutions with premium admission insights." />
+        <div className="popular-grid">
+          {filteredColleges.map((college) => (
+            <CollegeCard
+              key={college.id}
+              college={college}
+              onView={() => navigate(`/college/${college.id}`)}
+              onCompare={() => navigate('/compare')}
+              onSave={() => navigate('/saved')}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="section-panel section-light">
+        <SectionHeader title="Explore courses" description="Review the programs most students consider for a strong admission profile." />
+        <div className="course-pill-grid">
+          {courses.map((course) => (
+            <button key={course} type="button" className="course-pill">{course}</button>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-panel cta-panel">
+        <div>
+          <span className="hero-eyebrow">Admission planning made premium</span>
+          <h2>Track cutoffs, compare colleges, and save the best options—all in one place.</h2>
+        </div>
+        <button type="button" className="button-primary" onClick={() => navigate('/assistant')}>Talk to AI Assistant</button>
+      </section>
+    </MainLayout>
   );
 };
 
