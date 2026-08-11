@@ -63,3 +63,10 @@
 2026-08-11 00:17:35 [INFO] root - [AUTH] Fast2SMS HTTP status: 400
 2026-08-11 00:17:35 [INFO] root - [AUTH] Fast2SMS response: {'return': False, 'status_code': 427, 'message': 'Number blocked in Fast2SMS DND list'}
 2026-08-11 00:17:35 [INFO] werkzeug - 127.0.0.1 - - [11/Aug/2026 00:17:35] "[35m[1mPOST /api/auth/send-otp HTTP/1.1[0m" 502 -
+2026-08-11 00:20:32 [INFO] werkzeug - 127.0.0.1 - - [11/Aug/2026 00:20:32] "OPTIONS /api/auth/send-otp HTTP/1.1" 200 -
+2026-08-11 00:20:32 [INFO] root - [AUTH] Using plain Fast2SMS SMS route
+2026-08-11 00:20:32 [INFO] root - [AUTH] Fast2SMS endpoint: https://www.fast2sms.com/dev/bulkV2
+2026-08-11 00:20:32 [INFO] root - [AUTH] Fast2SMS route: q
+2026-08-11 00:20:33 [INFO] root - [AUTH] Fast2SMS HTTP status: 200
+2026-08-11 00:20:33 [INFO] root - [AUTH] Fast2SMS response: {'return': True, 'request_id': 'SxEbD7qOdUre8D2', 'message': ['SMS sent successfully.']}
+2026-08-11 00:20:33 [INFO] werkzeug - 127.0.0.1 - - [11/Aug/2026 00:20:33] "[35m[1mPOST /api/auth/send-otp HTTP/1.1[0m" 502 -
