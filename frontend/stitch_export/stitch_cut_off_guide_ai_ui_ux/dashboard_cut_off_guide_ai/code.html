@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard | Cut-Off Guide AI</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1a",
+                        "on-primary-fixed": "#351000",
+                        "on-surface-variant": "#5a4136",
+                        "surface-container-low": "#f4f3f0",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ffb693",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb691",
+                        "secondary": "#9e4300",
+                        "surface-container": "#efeeeb",
+                        "on-tertiary-container": "#24314e",
+                        "tertiary-fixed-dim": "#b9c6ea",
+                        "inverse-primary": "#ffb693",
+                        "on-primary-container": "#572000",
+                        "surface-tint": "#a04100",
+                        "on-secondary-fixed-variant": "#783100",
+                        "on-secondary-container": "#5c2400",
+                        "on-secondary-fixed": "#341100",
+                        "primary": "#a04100",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdbcc",
+                        "surface-bright": "#faf9f6",
+                        "secondary-fixed": "#ffdbcb",
+                        "surface-dim": "#dbdad7",
+                        "background": "#faf9f6",
+                        "tertiary-container": "#8c99bb",
+                        "surface-container-high": "#e9e8e5",
+                        "tertiary-fixed": "#d9e2ff",
+                        "outline-variant": "#e2bfb0",
+                        "inverse-on-surface": "#f2f1ee",
+                        "on-tertiary-fixed-variant": "#3a4664",
+                        "surface-variant": "#e3e2df",
+                        "secondary-container": "#ff7518",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1a1c1a",
+                        "primary-container": "#ff6b00",
+                        "on-tertiary-fixed": "#0d1b36",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e2df",
+                        "outline": "#8e7164",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "surface": "#faf9f6",
+                        "tertiary": "#525e7d",
+                        "inverse-surface": "#2f312f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "80px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .chart-line { stroke: theme('colors.primary-container'); stroke-width: 2; fill: none; }
+        .chart-area { fill: theme('colors.tertiary-fixed'); opacity: 0.3; }
+        .ambient-shadow { box-shadow: 0 4px 12px rgba(20, 33, 61, 0.03); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row antialiased">
+<!-- TopAppBar (Mobile Only) -->
+<header class="md:hidden flex justify-between items-center px-gutter h-16 w-full fixed top-0 z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md shadow-sm border-b border-outline-variant/30">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+            Cut-Off Guide AI
+        </div>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- NavigationDrawer (Desktop Only) -->
+<aside class="hidden md:flex flex-col w-80 z-[60] bg-surface dark:bg-surface-container-lowest border-r border-outline-variant shadow-xl fixed inset-y-0 left-0 py-6 h-full">
+<div class="px-gutter mb-8 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-variant">
+<img alt="Student Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a confident college student with a neat appearance, soft natural lighting, light neutral background. The style is modern, approachable, and academic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrwS4yLFzF1RD4huuxt7Nt0CEycuybqqr-lyaiZksJ8g8oHPNecwvhnyYgW_FHiAf-bgRFQaRGZc8Rub4KF3kZIlE7YmsM4V7QyWqjUd49Yb5Owms-KtSbqNmNXwKK7NXOIPnDLyBh-x48hfCbrwEXT99vUzR_tx0EFFIzXaQIozlLnYt9d0bc-fPhbVieVs0dH1QwBfDz8pz5mB5H9rt-LKpndwwrs_m8cuyq3m7YjYYLtJd1kZKa"/>
+</div>
+<div class="flex flex-col text-left">
+<span class="text-headline-md font-headline-md text-primary font-bold">Alex Morgan</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Premium Member</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant opacity-75">Class of 2025</span>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-4 px-4 py-3 border-l-4 border-primary bg-primary-container/10 text-primary font-bold text-label-sm font-label-sm hover:bg-surface-container-high transition-all active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-all border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                My Predictions
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-all border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+                College Search
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-all border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+                AI Assistant
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-all border-l-4 border-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-80 pt-16 md:pt-0 p-gutter bg-surface min-h-screen">
+<div class="max-w-container-max mx-auto space-y-stack-gap md:py-8">
+<!-- Welcome Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h1 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-on-background">Welcome back, Alex.</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant mt-2">Here is your academic intelligence overview for today.</p>
+</div>
+<button class="bg-primary-container text-on-primary px-6 py-3 rounded-xl font-label-sm text-label-sm flex items-center gap-2 hover:bg-primary transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Prediction
+                </button>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20 flex flex-col justify-between h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-body-md font-body-md text-on-surface-variant">Total Predictions</span>
+<div class="p-2 bg-primary-container/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-background">24</div>
+<div class="text-label-sm font-label-sm text-tertiary mt-2">+3 this week</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20 flex flex-col justify-between h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-body-md font-body-md text-on-surface-variant">Saved Colleges</span>
+<div class="p-2 bg-primary-container/10 rounded-lg text-primary">
+<span class="material-symbols-outlined">school</span>
+</div>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-background">12</div>
+<div class="text-label-sm font-label-sm text-tertiary mt-2">Top choice: MIT</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20 flex flex-col justify-between h-full">
+<div class="flex justify-between items-start mb-4">
+<span class="text-body-md font-body-md text-on-surface-variant">Avg Match Score</span>
+<div class="p-2 bg-tertiary-fixed/30 rounded-lg text-tertiary">
+<span class="material-symbols-outlined">percent</span>
+</div>
+</div>
+<div class="text-display-lg-mobile font-display-lg-mobile text-on-background">86%</div>
+<div class="text-label-sm font-label-sm text-primary mt-2">Highly competitive</div>
+</div>
+<!-- Metric 4 -->
+<div class="bg-primary-container rounded-xl p-6 ambient-shadow text-on-primary flex flex-col justify-between h-full relative overflow-hidden">
+<div class="absolute right-0 top-0 opacity-10">
+<span class="material-symbols-outlined text-9xl">smart_toy</span>
+</div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4">
+<span class="text-body-md font-body-md text-on-primary/90">AI Insights</span>
+</div>
+<div class="text-headline-md font-headline-md mb-2">Ready to review</div>
+<button class="text-label-sm font-label-sm underline hover:text-on-primary/80 transition-colors">View latest report</button>
+</div>
+</div>
+</div>
+<!-- Charts Section (Bento layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter mb-8">
+<!-- Main Chart -->
+<div class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-md font-headline-md text-on-background">Prediction Activity</h3>
+<select class="bg-surface-container border-none text-label-sm font-label-sm rounded-md py-1 px-3 text-on-surface focus:ring-primary focus:border-primary">
+<option>Last 30 Days</option>
+<option>This Year</option>
+</select>
+</div>
+<div class="h-64 w-full relative">
+<!-- Simulated Chart using SVG -->
+<svg class="w-full h-full preserve-aspect-ratio-none" viewbox="0 0 400 200">
+<path class="chart-area" d="M0,200 L0,150 Q50,130 100,160 T200,120 T300,80 T400,60 L400,200 Z"></path>
+<path class="chart-line" d="M0,150 Q50,130 100,160 T200,120 T300,80 T400,60"></path>
+<!-- Grid lines -->
+<line stroke="#e2bfb0" stroke-dasharray="4" stroke-opacity="0.3" x1="0" x2="400" y1="50" y2="50"></line>
+<line stroke="#e2bfb0" stroke-dasharray="4" stroke-opacity="0.3" x1="0" x2="400" y1="100" y2="100"></line>
+<line stroke="#e2bfb0" stroke-dasharray="4" stroke-opacity="0.3" x1="0" x2="400" y1="150" y2="150"></line>
+</svg>
+<div class="absolute bottom-0 left-0 w-full flex justify-between text-label-sm font-label-sm text-on-surface-variant mt-2 px-2">
+<span>Week 1</span><span>Week 2</span><span>Week 3</span><span>Week 4</span>
+</div>
+</div>
+</div>
+<!-- Secondary Info Card -->
+<div class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20 flex flex-col">
+<h3 class="text-headline-md font-headline-md text-on-background mb-4">Cutoff Trends</h3>
+<div class="flex-1 flex flex-col justify-center items-center text-center">
+<div class="w-24 h-24 rounded-full border-4 border-tertiary-fixed border-t-primary-container flex items-center justify-center mb-4">
+<span class="text-headline-md font-headline-md text-on-background">Stable</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant">Based on recent AI analysis, cutoffs for your saved colleges are projected to remain stable this cycle.</p>
+</div>
+</div>
+</div>
+<!-- Recent Predictions List -->
+<div class="bg-surface-container-lowest rounded-xl p-6 ambient-shadow border border-outline-variant/20 mb-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-md font-headline-md text-on-background">Recent Predictions</h3>
+<button class="text-primary text-label-sm font-label-sm hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-md bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">science</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-background font-semibold">Computer Science B.Tech</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">MIT · Fall 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-primary-container/10 text-primary text-label-sm font-label-sm">High Match (92%)</span>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-md bg-surface-container flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-background font-semibold">Psychology B.A.</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Stanford · Fall 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-tertiary-fixed/50 text-on-tertiary-container text-label-sm font-label-sm">Medium Match (68%)</span>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center justify-between p-4 rounded-lg hover:bg-surface-container-low transition-colors border border-outline-variant/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-md bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">business</span>
+</div>
+<div>
+<h4 class="text-body-md font-body-md text-on-background font-semibold">Business Administration</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Harvard · Fall 2024</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">Pending Analysis</span>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-10 px-gutter bg-surface-container-lowest dark:bg-surface-container-high flex flex-col items-center gap-stack-gap text-center border-t border-outline-variant/20 mb-16 md:mb-0">
+<div class="text-primary font-bold text-body-md font-body-md">Cut-Off Guide AI</div>
+<div class="flex gap-4 text-label-sm font-label-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant opacity-75">
+                    © 2024 Cut-Off Guide AI. Premium Academic Intelligence.
+                </div>
+</footer>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/20 flex justify-around items-center h-16 z-50 ambient-shadow">
+<a class="flex flex-col items-center justify-center w-full h-full text-primary font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-label-sm mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-label-sm mt-1">Predictions</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-[10px] font-label-sm mt-1">Colleges</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-label-sm mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Compare Colleges - Cut-Off Guide AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1a",
+                        "on-primary-fixed": "#351000",
+                        "on-surface-variant": "#5a4136",
+                        "surface-container-low": "#f4f3f0",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ffb693",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb691",
+                        "secondary": "#9e4300",
+                        "surface-container": "#efeeeb",
+                        "on-tertiary-container": "#24314e",
+                        "tertiary-fixed-dim": "#b9c6ea",
+                        "inverse-primary": "#ffb693",
+                        "on-primary-container": "#572000",
+                        "surface-tint": "#a04100",
+                        "on-secondary-fixed-variant": "#783100",
+                        "on-secondary-container": "#5c2400",
+                        "on-secondary-fixed": "#341100",
+                        "primary": "#a04100",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdbcc",
+                        "surface-bright": "#faf9f6",
+                        "secondary-fixed": "#ffdbcb",
+                        "surface-dim": "#dbdad7",
+                        "background": "#faf9f6",
+                        "tertiary-container": "#8c99bb",
+                        "surface-container-high": "#e9e8e5",
+                        "tertiary-fixed": "#d9e2ff",
+                        "outline-variant": "#e2bfb0",
+                        "inverse-on-surface": "#f2f1ee",
+                        "on-tertiary-fixed-variant": "#3a4664",
+                        "surface-variant": "#e3e2df",
+                        "secondary-container": "#ff7518",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1a1c1a",
+                        "primary-container": "#ff6b00",
+                        "on-tertiary-fixed": "#0d1b36",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e2df",
+                        "outline": "#8e7164",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "surface": "#faf9f6",
+                        "tertiary": "#525e7d",
+                        "inverse-surface": "#2f312f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "80px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "display-lg": ["Hanken Grotesk", "sans-serif"],
+                        "headline-md": ["Hanken Grotesk", "sans-serif"],
+                        "display-lg-mobile": ["Hanken Grotesk", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased pt-16 flex min-h-screen">
+<!-- Sidebar Navigation -->
+<nav aria-label="Sidebar" class="hidden md:flex flex-col h-full py-6 bg-surface dark:bg-surface-container-lowest text-primary dark:text-primary-fixed-dim font-body-md text-body-md fixed inset-y-0 left-0 w-80 z-[60] border-r border-outline-variant shadow-xl">
+<div class="px-gutter mb-8">
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-primary-container" data-alt="A small, circular avatar portrait of a young student, Alex Morgan, looking bright and optimistic, set against a clean, modern white background with soft, high-key lighting suitable for a premium academic platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHRfn55Q8Z7Z8VYGlZJnLVNRokj06sKweeQC0bTphcpajojpRzDlsJJhAPQG8De5SCEWb6-zWd77r3ukj6oHHyUp8V38oKVWv0YS954JWCx4ud6wLW3R2S-3AXQP7hX1YckxBhHEqXTwhcyC6RQ0V65CWtx427OmbhOcYWkaYDFcFemWzw3VR7hzJ6uWG6jj_65OICYLiFdn9V9gXH3sGIgxew3f3CAw8wFCtVfviHfRaslnOxDfN0"/>
+<div>
+<h2 class="text-headline-md font-headline-md text-primary font-bold">Alex Morgan</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Premium Member</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-75">Class of 2025</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2 w-full">
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined">dashboard</span> <span class="text-label-sm font-label-sm">Dashboard</span></a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined">analytics</span> <span class="text-label-sm font-label-sm">My Predictions</span></a>
+<a class="flex items-center gap-4 px-4 py-3 border-l-4 border-primary bg-primary-container/10 text-primary font-bold hover:bg-surface-container-high transition-all opacity-80" href="#"><span class="material-symbols-outlined">school</span> <span class="text-label-sm font-label-sm">College Search</span></a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined">smart_toy</span> <span class="text-label-sm font-label-sm">AI Assistant</span></a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all" href="#"><span class="material-symbols-outlined">settings</span> <span class="text-label-sm font-label-sm">Settings</span></a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-80 w-full min-h-screen bg-background">
+<!-- TopAppBar (Mobile & Top context) -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-md text-primary dark:text-primary-fixed-dim text-headline-md font-headline-md fixed top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-gutter h-16 md:hidden">
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full"><span class="material-symbols-outlined">menu</span></button>
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">Cut-Off Guide AI</span>
+<button class="text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full"><span class="material-symbols-outlined">search</span></button>
+</header>
+<div class="max-w-[container-max] mx-auto px-gutter py-section-padding">
+<!-- Page Header -->
+<div class="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+<div>
+<h1 class="text-display-lg-mobile md:text-display-lg font-display-lg-mobile md:font-display-lg text-on-background mb-4">Compare Colleges</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl">Analyze side-by-side metrics to find your optimal academic and financial fit.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary-container text-on-primary px-6 py-3 rounded-lg hover:opacity-90 transition-opacity font-label-sm text-label-sm shadow-md">
+<span class="material-symbols-outlined">smart_toy</span> Ask AI which is better?
+                </button>
+</div>
+<!-- College Selectors -->
+<div class="flex gap-4 mb-8 overflow-x-auto pb-4 hide-scrollbar">
+<!-- Selected College 1 -->
+<div class="flex-shrink-0 w-64 bg-surface rounded-xl border border-outline-variant/30 p-4 shadow-[0_4px_12px_rgba(20,33,61,0.03)] flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-tertiary-container/20 flex items-center justify-center text-primary-container font-bold">SU</div>
+<div>
+<h3 class="text-label-sm font-label-sm font-bold">Stanford Univ.</h3>
+<span class="text-[10px] text-on-surface-variant">Private Research</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+<!-- Selected College 2 -->
+<div class="flex-shrink-0 w-64 bg-surface rounded-xl border border-outline-variant/30 p-4 shadow-[0_4px_12px_rgba(20,33,61,0.03)] flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-tertiary-container/20 flex items-center justify-center text-primary-container font-bold">MIT</div>
+<div>
+<h3 class="text-label-sm font-label-sm font-bold">Mass. Institute</h3>
+<span class="text-[10px] text-on-surface-variant">Private Research</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+<!-- Add College Button -->
+<button class="flex-shrink-0 w-64 border-2 border-dashed border-outline-variant/50 rounded-xl p-4 flex items-center justify-center gap-2 text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">add</span>
+<span class="text-label-sm font-label-sm">Add College</span>
+</button>
+</div>
+<!-- Comparison Table Bento -->
+<div class="bg-surface rounded-xl border border-outline-variant/30 shadow-[0_4px_12px_rgba(20,33,61,0.03)] overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant/20">
+<th class="p-4 text-label-sm font-label-sm text-on-surface-variant w-1/4">Metric</th>
+<th class="p-4 text-headline-md font-headline-md w-3/8 border-l border-outline-variant/10">Stanford University</th>
+<th class="p-4 text-headline-md font-headline-md w-3/8 border-l border-outline-variant/10">MIT</th>
+</tr>
+</thead>
+<tbody class="text-body-md font-body-md divide-y divide-outline-variant/10">
+<tr>
+<td class="p-4 text-on-surface-variant font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-sm">location_on</span> Location</td>
+<td class="p-4 border-l border-outline-variant/10">Stanford, CA</td>
+<td class="p-4 border-l border-outline-variant/10">Cambridge, MA</td>
+</tr>
+<tr>
+<td class="p-4 text-on-surface-variant font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-sm">emoji_events</span> National Ranking</td>
+<td class="p-4 border-l border-outline-variant/10">#3 (US News)</td>
+<td class="p-4 border-l border-outline-variant/10">#2 (US News)</td>
+</tr>
+<tr>
+<td class="p-4 text-on-surface-variant font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-sm">payments</span> Annual Fees (Est)</td>
+<td class="p-4 border-l border-outline-variant/10">$57,693</td>
+<td class="p-4 border-l border-outline-variant/10 bg-tertiary-fixed/30 relative">
+                                $57,590
+                                <span class="absolute top-2 right-2 bg-primary-container text-on-primary text-[10px] px-2 py-0.5 rounded-full font-bold">Best Value</span>
+</td>
+</tr>
+<tr>
+<td class="p-4 text-on-surface-variant font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-sm">trending_up</span> CS Cutoff (Percentile)</td>
+<td class="p-4 border-l border-outline-variant/10 text-secondary-container font-bold">99.8%</td>
+<td class="p-4 border-l border-outline-variant/10 text-secondary-container font-bold">99.9%</td>
+</tr>
+<tr>
+<td class="p-4 text-on-surface-variant font-semibold flex items-center gap-2"><span class="material-symbols-outlined text-sm">groups</span> Acceptance Rate</td>
+<td class="p-4 border-l border-outline-variant/10">3.9%</td>
+<td class="p-4 border-l border-outline-variant/10">4.1%</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- AI Summary Card -->
+<div class="mt-8 bg-tertiary-fixed/20 border border-tertiary-container/30 rounded-xl p-6 flex gap-4 items-start shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary flex-shrink-0">
+<span class="material-symbols-outlined filled-icon">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md mb-2">AI Comparative Analysis</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Both Stanford and MIT are elite tier-1 institutions. If your focus is primarily theoretical computer science and engineering rigor, MIT slightly edges out. For entrepreneurship, startup ecosystems, and interdisciplinary studies, Stanford's Silicon Valley proximity offers unique advantages. Financially, both offer need-blind admissions for domestic students.</p>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-10 px-gutter bg-surface-container-lowest dark:bg-surface-container-high text-primary dark:text-primary-fixed-dim text-body-md font-body-md border-t border-outline-variant/20 flex flex-col items-center gap-stack-gap text-center mt-auto">
+<span class="text-primary font-bold">Cut-Off Guide AI</span>
+<p>© 2024 Cut-Off Guide AI. Premium Academic Intelligence.</p>
+<div class="flex gap-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Terms of Service</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Help Center</a>
+</div>
+</footer>
+</main>
+</body></html>

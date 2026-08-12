@@ -20,6 +20,13 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 FAST_TO_SMS_API_KEY = os.getenv("FAST_TO_SMS_API_KEY")
 COMPANY_GOOGLE_AUTH_URL = os.getenv("COMPANY_GOOGLE_AUTH_URL")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+GOOGLE_OAUTH_REDIRECT_URI = os.getenv(
+    "GOOGLE_OAUTH_REDIRECT_URI",
+    "http://localhost:5000/api/auth/google/callback",
+)
+FRONTEND_APP_URL = os.getenv("FRONTEND_APP_URL", "http://localhost:5173")
 OTP_TTL_SECONDS = int(os.getenv("OTP_TTL_SECONDS", "300"))
 
 OTP_SESSIONS = {}
@@ -144,6 +151,55 @@ def register_routes(app):
             return digits
 
         return ""
+
+    def _build_google_auth_url():
+        params = {
+            "client_id": GOOGLE_CLIENT_ID,
+            "redirect_uri": GOOGLE_OAUTH_REDIRECT_URI,
+            "response_type": "code",
+            "scope": "openid email profile",
+            "access_type": "online",
+            "prompt": "select_account",
+        }
+        return "https://accounts.google.com/o/oauth2/v2/auth?" + urllib_parse.urlencode(params)
+
+    def _exchange_google_code(code):
+        token_url = "https://oauth2.googleapis.com/token"
+        data = urllib_parse.urlencode(
+            {
+                "code": code,
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "redirect_uri": GOOGLE_OAUTH_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            }
+        ).encode("utf-8")
+
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+        request_obj = urllib_request.Request(token_url, data=data, headers=headers, method="POST")
+        with urllib_request.urlopen(request_obj, timeout=20) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    def _fetch_google_user_info(access_token):
+        request_obj = urllib_request.Request(
+            "https://openidconnect.googleapis.com/v1/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+            method="GET",
+        )
+        with urllib_request.urlopen(request_obj, timeout=20) as response:
+            return json.loads(response.read().decode("utf-8"))
+
+    def _build_frontend_callback_url(token, user):
+        query = urllib_parse.urlencode(
+            {
+                "token": token,
+                "uid": user.get("uid", ""),
+                "name": user.get("name", ""),
+                "email": user.get("email", ""),
+                "photoURL": user.get("photoURL", ""),
+            }
+        )
+        return f"{FRONTEND_APP_URL}/auth/google/callback?{query}"
 
     def _send_fast2sms_otp(phone, otp):
         if not FAST_TO_SMS_API_KEY:
@@ -383,23 +439,110 @@ def register_routes(app):
     @api.route("/auth/google", methods=["GET", "POST"])
     def google_auth():
         if request.method == "GET":
+            if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+                return redirect(_build_google_auth_url())
+
+            if COMPANY_GOOGLE_AUTH_URL:
+                return redirect(COMPANY_GOOGLE_AUTH_URL)
+
+            missing_vars = []
+            if not GOOGLE_CLIENT_ID:
+                missing_vars.append("GOOGLE_CLIENT_ID")
+            if not GOOGLE_CLIENT_SECRET:
+                missing_vars.append("GOOGLE_CLIENT_SECRET")
             if not COMPANY_GOOGLE_AUTH_URL:
-                return (
-                    jsonify(
-                        {
-                            "status": "error",
-                            "message": (
-                                "Google auth is not configured. "
-                                "Set COMPANY_GOOGLE_AUTH_URL in backend .env or provide company Google auth documentation."
-                            ),
-                        }
-                    ),
-                    501,
-                )
-            return redirect(COMPANY_GOOGLE_AUTH_URL)
+                missing_vars.append("COMPANY_GOOGLE_AUTH_URL")
+
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": (
+                            "Google OAuth credentials are not configured. "
+                            "Set "
+                            + ", ".join(missing_vars)
+                            + " in backend .env."
+                        ),
+                    }
+                ),
+                501,
+            )
 
         payload = request.get_json(silent=True) or {}
         return create_or_update_user(payload)
+
+    @api.route("/auth/google/callback", methods=["GET"])
+    def google_auth_callback():
+        error = request.args.get("error")
+        if error:
+            return jsonify({"status": "error", "message": f"Google auth failed: {error}"}), 400
+
+        code = (request.args.get("code") or "").strip()
+        if not code:
+            return jsonify({"status": "error", "message": "Missing authorization code from Google callback."}), 400
+
+        if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+            return (
+                jsonify(
+                    {
+                        "status": "error",
+                        "message": (
+                            "Google auth credentials are not configured. "
+                            "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in backend .env."
+                        ),
+                    }
+                ),
+                501,
+            )
+
+        try:
+            token_response = _exchange_google_code(code)
+            access_token = token_response.get("access_token")
+            if not access_token:
+                raise RuntimeError("Failed to obtain access token from Google")
+
+            user_info = _fetch_google_user_info(access_token)
+            email = (user_info.get("email") or "").strip().lower()
+            name = (user_info.get("name") or user_info.get("given_name") or "Google User").strip()
+            picture = (user_info.get("picture") or "").strip()
+
+            if not email:
+                return (
+                    jsonify(
+                        {"status": "error", "message": "Google account did not return an email address."}
+                    ),
+                    400,
+                )
+
+            user_payload = {
+                "uid": f"google-{email}",
+                "name": name,
+                "email": email,
+                "provider": "google",
+                "photoURL": picture,
+            }
+
+            create_response = create_or_update_user(user_payload)
+            if isinstance(create_response, tuple):
+                response_obj, status_code = create_response
+            else:
+                response_obj = create_response
+                status_code = 200
+
+            if status_code != 200 and status_code != 201:
+                return create_response
+
+            response_json = json.loads(response_obj.get_data(as_text=True))
+            token = response_json.get("token")
+            user = response_json.get("user") or {}
+            callback_url = _build_frontend_callback_url(token, user)
+            return redirect(callback_url)
+        except Exception as exc:
+            logging.exception("Google callback error")
+            return (
+                jsonify({"status": "error", "message": f"Google callback failed: {exc}"}),
+                502,
+            )
 
     @api.route("/auth/register", methods=["POST"])
     def register_user():

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiMail, FiPhone, FiUser } from 'react-icons/fi';
+import { FaGoogle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { sendOtp } from '../../services/api';
 import Button from '../../components/Button/Button';
@@ -14,6 +15,7 @@ const Login = () => {
   const [form, setForm] = useState({ fullName: '', email: '', phone: '' });
   const [errors, setErrors] = useState({});
   const [isSending, setIsSending] = useState(false);
+  const [isGoogleSigning, setIsGoogleSigning] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -78,6 +80,36 @@ const Login = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsGoogleSigning(true);
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const url = `${apiBase}/api/auth/google`;
+
+    try {
+      // Quick probe: if backend is not configured it returns 501 JSON.
+      const resp = await fetch(url, { method: 'GET', credentials: 'include', redirect: 'manual' });
+
+      if (resp && resp.status === 501) {
+        const data = await resp.json().catch(() => null);
+        const message = (data && data.message) || 'Google sign-in is not configured yet. Please contact the administrator.';
+        toast.error(message);
+        return;
+      }
+
+      // Otherwise navigate so the backend can redirect to the provider (or to company auth URL).
+      window.location.href = url;
+    } catch (err) {
+      // Some browsers block cross-origin fetch after redirect; fall back to direct navigation.
+      try {
+        window.location.href = url;
+      } catch (e) {
+        toast.error('Google sign-in is not configured yet. Please contact the administrator.');
+      }
+    } finally {
+      setIsGoogleSigning(false);
+    }
+  };
+
   return (
     <div className="page-shell login-shell">
       <Card className="auth-card">
@@ -85,6 +117,20 @@ const Login = () => {
         <div className="auth-heading">
           <h2>Let’s get you started</h2>
           <p>Secure your seat with a premium onboarding experience.</p>
+        </div>
+
+        <div className="social-auth">
+          <Button
+            variant="ghost"
+            fullWidth
+            onClick={handleGoogleSignIn}
+            disabled={isGoogleSigning}
+            icon={<FaGoogle />}
+          >
+            {isGoogleSigning ? 'Redirecting...' : 'Continue with Google'}
+          </Button>
+
+          <div className="or-separator">OR</div>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -122,6 +168,10 @@ const Login = () => {
             {isSending ? 'Sending OTP...' : 'Send OTP'}
           </Button>
         </form>
+
+        <p className="auth-terms">
+          By continuing, you agree to our <span onClick={() => navigate('/terms')}>Terms of Service</span> and <span onClick={() => navigate('/contact')}>Privacy Policy</span>.
+        </p>
       </Card>
     </div>
   );

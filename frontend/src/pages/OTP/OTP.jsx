@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { sendOtp, verifyOtp } from '../../services/api';
 import Button from '../../components/Button/Button';
-import Card from '../../components/Card/Card';
-import Navbar from '../../components/Navbar/Navbar';
 import OTPinput from '../../components/OTPinput/OTPinput';
 import { useAuth } from '../../context/AuthContext';
 import './OTP.css';
@@ -112,7 +110,6 @@ const OTP = () => {
 
   const maskPhone = (phone) => {
     if (!phone) return '';
-    // Expect +91XXXXXXXXXX
     const digits = phone.replace(/\D/g, '');
     if (digits.length >= 10) {
       const last4 = digits.slice(-4);
@@ -122,32 +119,44 @@ const OTP = () => {
   };
 
   return (
-    <div className="page-shell otp-shell">
-      <Card className="auth-card otp-card">
-        <Navbar title="Verify OTP" backTo="/login" />
-        <div className="auth-heading">
-          <h2>Verify your phone number</h2>
-          <p>Enter the 6-digit OTP sent to {maskPhone(pendingPhone)}</p>
+    <div className="auth-shell otp-shell">
+      <main className="otp-card">
+        <div className="otp-brand">
+          <span className="material-symbols-outlined otp-brand-icon">school</span>
+          <span>Cut-Off Guide AI</span>
         </div>
 
-        <OTPinput value={otp} onChange={handleOtpChange} />
+        <div className="otp-copy">
+          <h1>Verify your phone number</h1>
+          <p>
+            We've sent a 6-digit verification code to <strong>{maskPhone(pendingPhone)}</strong>
+          </p>
+        </div>
 
-        {error && <div className="form-error">{error}</div>}
+        <div className="otp-input-shell">
+          <OTPinput value={otp} onChange={handleOtpChange} />
+        </div>
+
+        {error && <div className="otp-error">{error}</div>}
 
         <div className="otp-meta">
-          <span>Resend in 00:{timer < 10 ? `0${timer}` : timer}</span>
-          <button className="link-button" type="button" onClick={handleResend} disabled={timer > 0 || isResending}>
-            {isResending ? 'Resending...' : 'Resend OTP'}
+          <span>Resend in <strong>00:{timer < 10 ? `0${timer}` : timer}</strong></span>
+          <button className="otp-resend" type="button" onClick={handleResend} disabled={timer > 0 || isResending}>
+            {isResending ? 'Resending...' : 'Resend Code'}
           </button>
         </div>
 
-        <Button variant="primary" fullWidth onClick={handleVerify} disabled={isVerifying}>
-          {isVerifying ? 'Verifying...' : 'Verify'}
-        </Button>
-        <Button variant="ghost" fullWidth onClick={() => navigate('/login')}>
-          Change phone number
-        </Button>
-      </Card>
+        <div className="otp-actions">
+          <Button variant="primary" fullWidth onClick={handleVerify} disabled={isVerifying}>
+            {isVerifying ? 'Verifying...' : 'Verify OTP'}
+          </Button>
+          <Button variant="ghost" fullWidth onClick={() => navigate('/login')}>
+            Change number
+          </Button>
+        </div>
+
+        <p className="otp-footer">© 2024 Cut-Off Guide AI. Secure Verification.</p>
+      </main>
     </div>
   );
 };

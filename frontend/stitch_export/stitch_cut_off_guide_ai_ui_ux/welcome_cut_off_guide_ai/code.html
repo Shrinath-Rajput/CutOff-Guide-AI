@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cut-Off Guide AI - Your Future. Your College. Your Choice.</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1a",
+                        "on-primary-fixed": "#351000",
+                        "on-surface-variant": "#5a4136",
+                        "surface-container-low": "#f4f3f0",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ffb693",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#ffb691",
+                        "secondary": "#9e4300",
+                        "surface-container": "#efeeeb",
+                        "on-tertiary-container": "#24314e",
+                        "tertiary-fixed-dim": "#b9c6ea",
+                        "inverse-primary": "#ffb693",
+                        "on-primary-container": "#572000",
+                        "surface-tint": "#a04100",
+                        "on-secondary-fixed-variant": "#783100",
+                        "on-secondary-container": "#5c2400",
+                        "on-secondary-fixed": "#341100",
+                        "primary": "#a04100",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#ffdbcc",
+                        "surface-bright": "#faf9f6",
+                        "secondary-fixed": "#ffdbcb",
+                        "surface-dim": "#dbdad7",
+                        "background": "#faf9f6",
+                        "tertiary-container": "#8c99bb",
+                        "surface-container-high": "#e9e8e5",
+                        "tertiary-fixed": "#d9e2ff",
+                        "outline-variant": "#e2bfb0",
+                        "inverse-on-surface": "#f2f1ee",
+                        "on-tertiary-fixed-variant": "#3a4664",
+                        "surface-variant": "#e3e2df",
+                        "secondary-container": "#ff7518",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1a1c1a",
+                        "primary-container": "#ff6b00",
+                        "on-tertiary-fixed": "#0d1b36",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e2df",
+                        "outline": "#8e7164",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#7a3000",
+                        "surface": "#faf9f6",
+                        "tertiary": "#525e7d",
+                        "inverse-surface": "#2f312f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-padding": "80px",
+                        "container-max": "1280px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "stack-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom Ambient Shadows */
+        .shadow-ambient-low {
+            box-shadow: 0 4px 12px rgba(20, 33, 61, 0.03);
+        }
+        .shadow-ambient-high {
+            box-shadow: 0 12px 24px rgba(20, 33, 61, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-container selection:text-white">
+<!-- TopAppBar JSON Component (Shell Layout) -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-gutter h-16 w-full">
+<!-- Leading Icon -->
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<!-- Brand Logo -->
+<div class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+            Cut-Off Guide AI
+        </div>
+<!-- Trailing Icon -->
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low transition-colors duration-200 p-2 rounded-full active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-16 w-full max-w-container-max mx-auto min-h-screen">
+<!-- Hero Section (Bento Grid Layout) -->
+<section class="py-section-padding px-gutter">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-center min-h-[70vh]">
+<!-- Text Content (7 cols on desktop) -->
+<div class="md:col-span-7 flex flex-col items-start gap-stack-gap pr-0 md:pr-12">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/50">
+<span class="material-symbols-outlined text-primary text-sm fill-icon" data-icon="temp_preferences_custom">temp_preferences_custom</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">AI POWERED</span>
+</div>
+<!-- Headline -->
+<h1 class="text-display-lg-mobile font-display-lg-mobile md:text-display-lg md:font-display-lg text-on-background mt-2">
+                        Your Future.<br/>Your College.<br/>Your Choice.
+                    </h1>
+<!-- Subtext -->
+<p class="text-body-lg font-body-lg text-on-surface-variant mt-2 max-w-xl">
+                        Navigate the complexities of elite higher education admissions with precision. Our AI-driven intelligence provides clarity, not just data.
+                    </p>
+<!-- CTAs -->
+<div class="flex flex-col sm:flex-row gap-4 mt-6">
+<a class="inline-flex items-center justify-center bg-primary-container text-white px-8 py-4 rounded-xl text-body-md font-body-md font-semibold hover:bg-primary transition-colors shadow-ambient-low" href="#predictor">
+                            Start Your Journey
+                        </a>
+<a class="inline-flex items-center justify-center bg-surface border border-outline-variant text-primary px-8 py-4 rounded-xl text-body-md font-body-md font-semibold hover:bg-surface-container-low transition-colors" href="#discovery">
+                            Explore Colleges
+                        </a>
+</div>
+<!-- Quick Stats (Inline) -->
+<div class="flex items-center gap-8 mt-12 pt-8 border-t border-outline-variant/30 w-full max-w-md">
+<div>
+<div class="text-headline-md font-headline-md text-primary font-bold">500+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">ELITE COLLEGES</div>
+</div>
+<div class="w-px h-10 bg-outline-variant/30"></div>
+<div>
+<div class="text-headline-md font-headline-md text-primary font-bold">95%</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">PREDICTION ACCURACY</div>
+</div>
+</div>
+</div>
+<!-- Hero Image (5 cols on desktop, Asymmetric presentation) -->
+<div class="md:col-span-5 h-[400px] md:h-[600px] relative rounded-xl overflow-hidden shadow-ambient-high mt-12 md:mt-0">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A highly detailed, ultra-realistic photograph of a premium, elite Indian college campus during golden hour. The architecture blends historic sandstone arches with modern glass facilities. The lighting is warm and aspirational, casting soft shadows across a pristine green quad. The image conveys academic excellence, high status, and a modern light-mode aesthetic, utilizing deep navy shadows and vibrant orange sunset highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBTmnfvvw6sQtUDMxSBbwM9pLOQ05foYgSF8JFMhoHEl9W55_nffqcH5yKGi5xTcgt29Wl0R9i9Xk7kfcjk3oHJazQkVAnh2GQPGwiwFrEuBHk3h1rEBSxSMARuwow_Q0VJrjo0E8w6arK9c6Ha26ieheJL5Fwpch5Gk4yE9jH5ytELuKfn1vH6ropmjMK4P1BIkxmmXzfJsSvazK4uSfzO4fXy-6jPFC8Duv-vv8NoeI_rVpYcuKj"/>
+<!-- Glassmorphism overlay card -->
+<div class="absolute bottom-6 left-6 right-6 p-4 rounded-xl bg-surface/70 backdrop-blur-md border border-white/20 shadow-sm flex items-center justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">AI Insight</div>
+<div class="text-body-md font-body-md font-semibold text-on-background">Admission Probability High</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section (Bento Grid) -->
+<section class="py-section-padding px-gutter bg-surface-container-lowest">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="text-display-lg-mobile font-display-lg-mobile md:text-headline-md md:font-headline-md text-on-background mb-4">Precision Intelligence for Admissions</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Advanced algorithms simplify the research process, providing actionable insights for ambitious students.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface rounded-xl p-6 shadow-ambient-low border border-outline-variant/20 flex flex-col gap-4 hover:shadow-ambient-high transition-shadow duration-300">
+<div class="w-12 h-12 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="target">target</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background text-lg">AI Predictor</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm">Calculate your true admission chances based on historical cutoff data and real-time trends.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface rounded-xl p-6 shadow-ambient-low border border-outline-variant/20 flex flex-col gap-4 hover:shadow-ambient-high transition-shadow duration-300">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed text-on-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background text-lg">Discovery Engine</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm">Uncover hidden gem institutions that perfectly align with your academic profile and career goals.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface rounded-xl p-6 shadow-ambient-low border border-outline-variant/20 flex flex-col gap-4 hover:shadow-ambient-high transition-shadow duration-300">
+<div class="w-12 h-12 rounded-lg bg-surface-variant text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background text-lg">Smart Compare</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm">Evaluate multiple colleges side-by-side using over 50 metric points from ROI to campus life.</p>
+</div>
+<!-- Card 4 (Wider) -->
+<div class="bg-surface rounded-xl p-6 shadow-ambient-low border border-outline-variant/20 flex flex-col gap-4 md:col-span-2 hover:shadow-ambient-high transition-shadow duration-300">
+<div class="flex items-start justify-between">
+<div class="w-12 h-12 rounded-lg bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center mb-4">
+<span class="material-symbols-outlined" data-icon="timeline">timeline</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary-container bg-secondary-fixed/50 px-2 py-1 rounded">Premium</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background text-lg">Historical Trend Analysis</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm max-w-md">Visualize five years of cutoff data fluctuations. Understand macro trends in engineering, medical, and commerce streams before making your choice.</p>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface rounded-xl p-6 shadow-ambient-low border border-outline-variant/20 flex flex-col gap-4 hover:shadow-ambient-high transition-shadow duration-300">
+<div class="w-12 h-12 rounded-lg bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-background text-lg">Seat Alerts</h3>
+<p class="text-body-md font-body-md text-on-surface-variant text-sm">Real-time notifications for counseling rounds and vacant seat availability.</p>
+</div>
+</div>
+</section>
+<!-- Process Flow Section -->
+<section class="py-section-padding px-gutter">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="text-display-lg-mobile font-display-lg-mobile md:text-headline-md md:font-headline-md text-on-background mb-4">The Methodology</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">A structured, data-driven path from confusion to conviction.</p>
+</div>
+<div class="flex flex-col md:flex-row justify-between relative max-w-5xl mx-auto">
+<!-- Connecting Line (Desktop) -->
+<div class="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-px bg-outline-variant/50 -z-10"></div>
+<!-- Steps -->
+<div class="flex flex-col items-center text-center gap-4 mb-8 md:mb-0 w-full md:w-1/5 relative">
+<div class="w-14 h-14 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center text-headline-md font-headline-md text-on-surface-variant z-10">01</div>
+<h4 class="text-body-md font-body-md font-semibold text-on-background">Profile</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-normal">Input scores &amp; preferences.</p>
+</div>
+<div class="flex flex-col items-center text-center gap-4 mb-8 md:mb-0 w-full md:w-1/5 relative">
+<div class="w-14 h-14 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center text-headline-md font-headline-md text-on-surface-variant z-10">02</div>
+<h4 class="text-body-md font-body-md font-semibold text-on-background">Analysis</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-normal">AI cross-references data.</p>
+</div>
+<div class="flex flex-col items-center text-center gap-4 mb-8 md:mb-0 w-full md:w-1/5 relative">
+<div class="w-14 h-14 rounded-full bg-primary-container text-white border-2 border-primary-container shadow-md flex items-center justify-center text-headline-md font-headline-md z-10">03</div>
+<h4 class="text-body-md font-body-md font-semibold text-primary font-bold">Prediction</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-normal">Generate probability matrix.</p>
+</div>
+<div class="flex flex-col items-center text-center gap-4 mb-8 md:mb-0 w-full md:w-1/5 relative">
+<div class="w-14 h-14 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center text-headline-md font-headline-md text-on-surface-variant z-10">04</div>
+<h4 class="text-body-md font-body-md font-semibold text-on-background">Matching</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-normal">Filter by strict criteria.</p>
+</div>
+<div class="flex flex-col items-center text-center gap-4 w-full md:w-1/5 relative">
+<div class="w-14 h-14 rounded-full bg-surface-container-high border-2 border-outline-variant flex items-center justify-center text-headline-md font-headline-md text-on-surface-variant z-10">05</div>
+<h4 class="text-body-md font-body-md font-semibold text-on-background">Recommend</h4>
+<p class="text-label-sm font-label-sm text-on-surface-variant font-normal">Final curated list.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer JSON Component -->
+<footer class="w-full py-10 px-gutter bg-surface-container-lowest dark:bg-surface-container-high border-t border-outline-variant/20 flex flex-col items-center gap-stack-gap text-center">
+<!-- Copyright -->
+<div class="text-body-md font-body-md text-on-surface-variant">
+            © 2024 Cut-Off Guide AI. Premium Academic Intelligence.
+        </div>
+<!-- Links -->
+<div class="flex flex-wrap justify-center gap-6">
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-label-sm font-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Help Center</a>
+</div>
+</footer>
+</body></html>

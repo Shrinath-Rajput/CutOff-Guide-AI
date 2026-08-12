@@ -6,6 +6,7 @@ import OTP from '../pages/OTP/OTP';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import Home from '../pages/Home/Home';
 import Profile from '../pages/Profile/Profile';
+import Onboarding from '../pages/Onboarding/Onboarding';
 import About from '../pages/About/About';
 import Terms from '../pages/Terms/Terms';
 import Contact from '../pages/Contact/Contact';
@@ -16,6 +17,7 @@ import Cutoff from '../pages/Cutoff/Cutoff';
 import Assistant from '../pages/Assistant/Assistant';
 import Saved from '../pages/Saved/Saved';
 import History from '../pages/History/History';
+import GoogleCallback from '../pages/GoogleCallback/GoogleCallback';
 import ProtectedRoute from './ProtectedRoute';
 
 const AppRoutes = () => {
@@ -60,6 +62,15 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/onboarding"
+          element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="*" element={<Navigate to="/welcome" replace />} />
       </Routes>
     </BrowserRouter>
