@@ -31,7 +31,7 @@ const GoogleCallback = () => {
     };
 
     login(user, token);
-    const timeout = setTimeout(() => navigate('/home', { replace: true }), 500);
+    const timeout = setTimeout(() => navigate('/onboarding', { replace: true }), 500);
     return () => clearTimeout(timeout);
   }, [location.search, login, navigate]);
 

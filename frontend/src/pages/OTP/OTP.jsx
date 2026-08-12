@@ -59,7 +59,7 @@ const OTP = () => {
 
       login(backendUser, token);
       toast.success('Phone login successful');
-      navigate('/home');
+      navigate('/onboarding');
     } catch (error) {
       console.error('OTP verify error', error);
       const errorMessage =

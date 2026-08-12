@@ -19,8 +19,11 @@ import Saved from '../pages/Saved/Saved';
 import History from '../pages/History/History';
 import GoogleCallback from '../pages/GoogleCallback/GoogleCallback';
 import ProtectedRoute from './ProtectedRoute';
+import { OnboardingProvider } from '../context/OnboardingContext';
+import { useAuth } from '../context/AuthContext';
 
 const AppRoutes = () => {
+  const { currentUser } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
@@ -30,6 +33,7 @@ const AppRoutes = () => {
         <Route path="/otp" element={<OTP />} />
         <Route path="/about" element={<About />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/colleges" element={<Colleges />} />
         <Route path="/college/:id" element={<CollegeDetails />} />
@@ -66,7 +70,9 @@ const AppRoutes = () => {
           path="/onboarding"
           element={
             <ProtectedRoute>
-              <Onboarding />
+              <OnboardingProvider currentUser={currentUser}>
+                <Onboarding />
+              </OnboardingProvider>
             </ProtectedRoute>
           }
         />

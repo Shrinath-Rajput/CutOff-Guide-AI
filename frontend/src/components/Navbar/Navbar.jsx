@@ -1,13 +1,22 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiMenu, FiX, FiSearch, FiUser, FiChevronDown } from 'react-icons/fi';
-import { useAuth } from '../../context/AuthContext';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { FiArrowLeft, FiMenu, FiX } from 'react-icons/fi';
 import './Navbar.css';
 
-const Navbar = ({ title, backTo = '/welcome' }) => {
-  const location = useLocation();
+const navLinks = [
+  { label: 'Home', to: '/home' },
+  { label: 'About', to: '/about' },
+  { label: 'Colleges', to: '/colleges' },
+  { label: 'Compare', to: '/compare' },
+  { label: 'Cutoff / Result', to: '/cutoff' },
+  { label: 'AI Assistant', to: '/assistant' },
+  { label: 'Saved Colleges', to: '/saved' },
+  { label: 'Contact', to: '/contact' },
+  { label: 'Terms', to: '/terms' },
+];
+
+const Navbar = ({ title, backTo = '/welcome', onSearch, bookmarkTo = '/saved', profileTo = '/profile' }) => {
   const navigate = useNavigate();
-  const { currentUser, isAuthenticated, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (title) {
@@ -25,40 +34,38 @@ const Navbar = ({ title, backTo = '/welcome' }) => {
   return (
     <header className="site-navbar">
       <div className="navbar-inner">
-        <Link to="/home" className="brand-link">
-          <span className="brand-mark">C</span>
-          <div>
-            <strong>CutOff Guide AI</strong>
-            <span>Admission Platform</span>
-          </div>
+        <Link to="/home" className="brand-link" onClick={() => setMobileOpen(false)}>
+          Cutoff Guide AI
         </Link>
 
         <nav className={`site-menu ${mobileOpen ? 'open' : ''}`}>
-          <Link to="/home" className={location.pathname === '/home' ? 'active' : ''}>Home</Link>
-          <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>About</Link>
-          <Link to="/colleges" className={location.pathname === '/colleges' ? 'active' : ''}>Colleges</Link>
-          <Link to="/compare" className={location.pathname === '/compare' ? 'active' : ''}>Compare</Link>
-          <Link to="/cutoff" className={location.pathname === '/cutoff' ? 'active' : ''}>Cutoff / Result</Link>
-          <Link to="/assistant" className={location.pathname === '/assistant' ? 'active' : ''}>AI Assistant</Link>
-          <Link to="/saved" className={location.pathname === '/saved' ? 'active' : ''}>Saved Colleges</Link>
-          <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>Contact</Link>
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => (isActive ? 'active' : '')}
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </nav>
 
         <div className="navbar-actions">
-          <button className="navbar-search" type="button" aria-label="Search">
-            <FiSearch />
+          <button
+            className="navbar-icon"
+            type="button"
+            aria-label="Search"
+            onClick={onSearch}
+          >
+            <span className="material-symbols-outlined">search</span>
           </button>
-          {isAuthenticated ? (
-            <button className="navbar-profile" type="button" onClick={() => navigate('/profile')}>
-              <FiUser />
-              <span>{currentUser?.name?.split(' ')[0] || 'Profile'}</span>
-              <FiChevronDown />
-            </button>
-          ) : (
-            <Link to="/welcome" className="signin-link">
-              Login / Signup
-            </Link>
-          )}
+          <Link to={bookmarkTo} className="navbar-icon" aria-label="Saved Colleges">
+            <span className="material-symbols-outlined">bookmark</span>
+          </Link>
+          <button className="navbar-icon" type="button" aria-label="Profile" onClick={() => navigate(profileTo)}>
+            <span className="material-symbols-outlined">account_circle</span>
+          </button>
           <button type="button" className="mobile-toggle" onClick={() => setMobileOpen((prev) => !prev)}>
             {mobileOpen ? <FiX /> : <FiMenu />}
           </button>
