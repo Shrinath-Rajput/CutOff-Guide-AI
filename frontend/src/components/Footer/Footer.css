@@ -1,63 +1,319 @@
-.site-footer {
+/* ===== FOURISE FOOTER - MAIN CONTAINER ===== */
+.fourise-footer {
+  position: relative;
   width: 100%;
+  background: linear-gradient(135deg, #3d6b8f 0%, #4a7ba7 100%);
+  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 3.5rem 1.5rem 2rem;
+  margin-top: auto;
+  overflow: hidden;
+}
+
+.footer-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 3rem 1.5rem 3rem;
-  color: #5a4136;
-  background: #faf9f6;
-}
-
-.footer-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(140px, 1fr));
-  gap: 2rem;
-  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 3rem;
+  position: relative;
+  z-index: 2;
 }
 
-.footer-column h3 {
-  margin: 0 0 0.9rem;
-  font-family: 'Newsreader', serif;
-  font-size: 1.15rem;
-  color: #1a1c1a;
+/* ===== FOOTER SECTIONS ===== */
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.footer-column h4 {
-  margin-bottom: 1rem;
-  font-family: 'Inter', sans-serif;
+.footer-section-title {
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #1a1c1a;
-  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  border-bottom: 2px solid #f0a84d;
+  padding-bottom: 0.75rem;
 }
 
-.footer-brand {
+/* ===== BRAND SECTION ===== */
+.footer-brand-section {
+  gap: 1rem;
+}
+
+.footer-brand-logo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.fourise-logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #f0a84d;
+  line-height: 1.2;
+}
+
+.fourise-tagline {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #cce0f0;
+  letter-spacing: 1px;
+}
+
+.footer-brand-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #e0e8f0;
+  margin: 0;
+}
+
+/* ===== CONTACT SECTION ===== */
+.footer-contact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.contact-icon {
+  flex-shrink: 0;
+  font-size: 1.5rem;
+  color: #f0a84d;
+  margin-top: 0.25rem;
+}
+
+.contact-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f0a84d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contact-link {
+  font-size: 0.95rem;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  word-break: break-word;
+}
+
+.contact-link:hover {
+  color: #f0a84d;
+  text-decoration: underline;
+}
+
+.contact-text {
+  font-size: 0.95rem;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+/* ===== CORPORATE INFORMATION SECTION ===== */
+.corporate-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.corporate-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.corporate-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f0a84d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.corporate-value {
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  word-break: break-all;
+}
+
+/* ===== LINKS SECTION ===== */
+.footer-links-grid {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.footer-brand p {
+.footer-link {
+  font-size: 0.95rem;
+  color: #e0e8f0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  border-left: 2px solid transparent;
+  padding-left: 0.75rem;
+}
+
+.footer-link:hover {
+  color: #f0a84d;
+  border-left-color: #f0a84d;
+}
+
+/* ===== FOOTER BOTTOM ===== */
+.footer-bottom {
+  max-width: 1280px;
+  margin: 2.5rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
+}
+
+.footer-bottom-content {
+  text-align: center;
+}
+
+.footer-copyright {
+  font-size: 0.9rem;
+  color: #e0e8f0;
+  margin: 0 0 0.5rem;
+}
+
+.footer-disclaimer {
+  font-size: 0.85rem;
+  color: #b8c8d8;
   margin: 0;
-  color: #5a4136;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.7;
 }
 
-.footer-column a {
-  display: block;
-  color: #5a4136;
-  margin-bottom: 0.85rem;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
+/* ===== DECORATIVE ACCENT SHAPE ===== */
+.footer-accent-shape {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, #f0a84d 0%, #f0a84d 50%, transparent 100%);
+  opacity: 0.15;
+  clip-path: polygon(100% 0, 100% 100%, 0% 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
-.footer-column a:hover {
-  color: #a04100;
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* TABLET (768px and below) */
+@media (max-width: 768px) {
+  .fourise-footer {
+    padding: 2.5rem 1.5rem 1.5rem;
+  }
+
+  .footer-container {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .footer-section-title {
+    font-size: 0.95rem;
+  }
+
+  .fourise-logo {
+    font-size: 1.5rem;
+  }
+
+  .fourise-tagline {
+    font-size: 0.8rem;
+  }
+
+  .contact-icon {
+    font-size: 1.25rem;
+  }
+
+  .footer-accent-shape {
+    width: 200px;
+    height: 200px;
+  }
 }
 
-@media (max-width: 900px) {
-  .footer-grid {
+/* MOBILE (480px and below) */
+@media (max-width: 480px) {
+  .fourise-footer {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .footer-container {
     grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .footer-section-title {
+    font-size: 0.9rem;
+  }
+
+  .fourise-logo {
+    font-size: 1.4rem;
+    letter-spacing: 1.5px;
+  }
+
+  .fourise-tagline {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-brand-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .contact-item {
+    gap: 0.85rem;
+  }
+
+  .contact-icon {
+    font-size: 1.1rem;
+  }
+
+  .contact-label,
+  .corporate-label {
+    font-size: 0.8rem;
+  }
+
+  .contact-link,
+  .contact-text,
+  .corporate-value,
+  .footer-link {
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .footer-copyright {
+    font-size: 0.85rem;
+  }
+
+  .footer-disclaimer {
+    font-size: 0.8rem;
+  }
+
+  .footer-accent-shape {
+    width: 150px;
+    height: 150px;
   }
 }

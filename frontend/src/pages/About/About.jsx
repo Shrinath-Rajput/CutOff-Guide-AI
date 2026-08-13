@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import Footer from '../../components/Footer/Footer';
 import './About.css';
 
 const About = () => {
@@ -157,54 +158,7 @@ const About = () => {
         </section>
       </main>
 
-      {/* ===== FOOTER ===== */}
-      <footer className="about-site-footer">
-        <div className="about-footer-inner">
-          <div className="about-footer-brand">
-            <h3 className="about-footer-brand-title">Cutoff Guide AI</h3>
-            <p className="about-footer-brand-tagline">
-              Empowering students with AI-driven academic insights.
-            </p>
-            <p className="about-footer-brand-copy">
-              © 2024 Cutoff Guide AI. All rights reserved.
-            </p>
-          </div>
-
-          <div className="about-footer-cols">
-            <div className="about-footer-col">
-              <h4 className="about-footer-col-heading">PLATFORM</h4>
-              <Link to="/colleges" className="about-footer-link">Colleges</Link>
-              <Link to="/cutoff" className="about-footer-link">Predictor</Link>
-              <Link to="/compare" className="about-footer-link">Compare</Link>
-              <Link to="/assistant" className="about-footer-link">AI Assistant</Link>
-              <Link to="/saved" className="about-footer-link">Saved Colleges</Link>
-            </div>
-
-            <div className="about-footer-col">
-              <h4 className="about-footer-col-heading">COMPANY</h4>
-              <Link to="/about" className="about-footer-link about-footer-link-active">About</Link>
-              <Link to="/contact" className="about-footer-link">Contact</Link>
-              <Link to="/terms" className="about-footer-link">Terms</Link>
-            </div>
-
-            <div className="about-footer-col">
-              <h4 className="about-footer-col-heading">SUPPORT</h4>
-              <span
-                className="about-footer-link about-footer-link-muted"
-                onClick={() => navigate('/contact')}
-              >
-                Help Center
-              </span>
-              <span
-                className="about-footer-link about-footer-link-muted"
-                onClick={() => navigate('/contact')}
-              >
-                FAQs
-              </span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

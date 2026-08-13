@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import Footer from '../../components/Footer/Footer';
 import './Colleges.css';
 
 const collegeItems = [
@@ -408,58 +409,7 @@ const Colleges = () => {
         </div>
       </main>
 
-      <footer className="colleges-footer">
-        <div className="footer-grid">
-          <div className="footer-brand-block">
-            <Link to="/home" className="footer-logo">
-              Cutoff Guide AI
-            </Link>
-            <p>
-              Empowering academic excellence through AI-driven insights and comprehensive university data.
-            </p>
-            <p className="footer-copy">© 2024 Cutoff Guide AI. Empowering academic excellence.</p>
-          </div>
-
-          <div>
-            <h4>Product</h4>
-            <ul>
-              <li>
-                <Link to="/colleges">Colleges</Link>
-              </li>
-              <li>
-                <Link to="/cutoff">Predictor</Link>
-              </li>
-              <li>
-                <Link to="/assistant">AI Assistant</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4>Company</h4>
-            <ul>
-              <li>
-                <Link to="/about">About Us</Link>
-              </li>
-              <li>
-                <Link to="/home">Careers</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4>Support</h4>
-            <ul>
-              <li>
-                <Link to="/contact">Help Center</Link>
-              </li>
-              <li>
-                <Link to="/contact">Contact</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       <div className={`mobile-filter-panel ${mobileFiltersOpen ? 'open' : ''}`}>
         <div className="mobile-filter-content">

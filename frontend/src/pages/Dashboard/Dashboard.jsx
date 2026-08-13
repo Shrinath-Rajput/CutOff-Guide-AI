@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import Footer from '../../components/Footer/Footer';
 import { useAuth } from '../../context/AuthContext';
 import './Dashboard.css';
 
@@ -246,40 +247,7 @@ const Dashboard = () => {
         </section>
       </main>
 
-      <footer className="dashboard-footer">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <div>Cutoff Guide AI</div>
-            <p>© 2024 Cutoff Guide AI. Empowering academic excellence.</p>
-          </div>
-          <div className="footer-column">
-            <h4>Product</h4>
-            <button type="button" className="footer-link" onClick={() => navigate('/colleges')}>
-              Colleges
-            </button>
-            <button type="button" className="footer-link" onClick={() => navigate('/cutoff')}>
-              Predictor
-            </button>
-            <button type="button" className="footer-link" onClick={() => navigate('/assistant')}>
-              AI Assistant
-            </button>
-          </div>
-          <div className="footer-column">
-            <h4>Company</h4>
-            <button type="button" className="footer-link" onClick={() => navigate('/about')}>
-              About Us
-            </button>
-            <button type="button" className="footer-link">Careers</button>
-          </div>
-          <div className="footer-column">
-            <h4>Support</h4>
-            <button type="button" className="footer-link">Help Center</button>
-            <button type="button" className="footer-link" onClick={() => navigate('/contact')}>
-              Contact
-            </button>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
