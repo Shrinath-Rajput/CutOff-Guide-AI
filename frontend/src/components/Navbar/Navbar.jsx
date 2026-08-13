@@ -12,7 +12,6 @@ const navLinks = [
   { label: 'AI Assistant', to: '/assistant' },
   { label: 'Saved Colleges', to: '/saved' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Terms', to: '/terms' },
 ];
 
 const Navbar = ({ title, backTo = '/welcome', onSearch, bookmarkTo = '/saved', profileTo = '/profile' }) => {

@@ -1,69 +1,207 @@
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import './About.css';
 
 const About = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="about-page">
       <Navbar />
 
       <main className="about-main">
-        <header className="about-hero-header">
-          <h1>About CutOff Guide AI</h1>
-          <p>One platform for smarter college admission decisions, built for Maharashtra students seeking clarity, confidence, and better outcomes.</p>
-        </header>
+        {/* ===== HERO SECTION ===== */}
+        <section className="about-hero">
+          <div className="about-hero-inner">
+            <div className="about-hero-badge">
+              <span className="material-symbols-outlined about-hero-badge-icon">auto_awesome</span>
+              <span>Powered by Advanced AI</span>
+            </div>
 
-        <section className="about-section">
-          <h2>About CutOff Guide AI</h2>
-          <p>
-            CutOff Guide AI helps students make informed choices by using intelligent admission insights and past cutoff trends. Our goal is to connect your profile with the best-fit colleges and courses across Maharashtra.
-          </p>
+            <h1 className="about-hero-heading">Smarter College Decisions with AI</h1>
+
+            <p className="about-hero-desc">
+              We bridge the gap between complex admission data and student aspirations, providing crystal-clear insights to guide your academic journey.
+            </p>
+
+            <div className="about-hero-image-wrap">
+              <img
+                src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80"
+                alt="Students collaborating in a modern university setting"
+                className="about-hero-image"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80';
+                }}
+              />
+            </div>
+          </div>
         </section>
 
-        <section className="about-section">
-          <h2>How CutOff Guide AI helps you decide</h2>
-          <ul>
-            <li>Accurate cutoff estimates based on historical data and category-specific trends.</li>
-            <li>College comparison tools to weigh options side-by-side.</li>
-            <li>Saved shortlists so you can track and revisit strong admission choices.</li>
-          </ul>
+        {/* ===== MISSION + WHY CHOOSE US ===== */}
+        <section className="about-mission">
+          <div className="about-mission-inner">
+            <div className="about-mission-left">
+              <h2 className="about-section-heading">Our Mission</h2>
+              <p className="about-mission-text">
+                To democratize access to elite higher education insights. We believe every student deserves data-backed clarity when making the most critical decision of their academic career. By leveraging cutting-edge machine learning, we transform overwhelming historical cutoff data into actionable, personalized predictions.
+              </p>
+            </div>
+
+            <div className="about-mission-right">
+              <div className="about-why-card">
+                <span className="about-why-label">WHY CHOOSE US</span>
+                <ul className="about-why-list">
+                  <li>
+                    <span className="material-symbols-outlined about-why-check">check_circle</span>
+                    <span>Industry-leading predictive accuracy models.</span>
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined about-why-check">check_circle</span>
+                    <span>Real-time data aggregation from top universities.</span>
+                  </li>
+                  <li>
+                    <span className="material-symbols-outlined about-why-check">check_circle</span>
+                    <span>Unbiased, data-driven matching algorithms.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section className="about-section">
-          <h2>Mission &amp; Vision</h2>
-          <p>
-            Our mission is to empower students with admission clarity through intuitive AI-driven tools. We envision a future where every student can confidently navigate college selection using accurate, easy-to-understand guidance.
-          </p>
+        {/* ===== 3 FEATURE CARDS ===== */}
+        <section className="about-features">
+          <div className="about-features-inner">
+            <div className="about-feature-card glass-card">
+              <div className="about-feature-icon-wrap about-feature-icon-1">
+                <span className="material-symbols-outlined about-feature-icon">memory</span>
+              </div>
+              <h3 className="about-feature-title">AI Powered</h3>
+              <p className="about-feature-desc">
+                Our proprietary neural networks continuously learn from admissions trends to provide unparalleled forecasting precision.
+              </p>
+            </div>
+
+            <div className="about-feature-card glass-card">
+              <div className="about-feature-icon-wrap about-feature-icon-2">
+                <span className="material-symbols-outlined about-feature-icon">analytics</span>
+              </div>
+              <h3 className="about-feature-title">Data Driven</h3>
+              <p className="about-feature-desc">
+                Decisions backed by millions of historical data points, ensuring you never rely on guesswork for your future.
+              </p>
+            </div>
+
+            <div className="about-feature-card glass-card">
+              <div className="about-feature-icon-wrap about-feature-icon-3">
+                <span className="material-symbols-outlined about-feature-icon">verified_user</span>
+              </div>
+              <h3 className="about-feature-title">Trusted &amp; Secure</h3>
+              <p className="about-feature-desc">
+                Enterprise-grade security protecting your academic profile, ensuring complete privacy throughout your journey.
+              </p>
+            </div>
+          </div>
         </section>
 
-        <section className="about-section">
-          <h2>AI at work</h2>
-          <p>
-            CutOff Guide AI analyzes past cutoff patterns, reservation categories, and university preferences to provide intelligent recommendations. This helps students identify strong college matches and understand the admission landscape better.
-          </p>
+        {/* ===== HOW IT WORKS TIMELINE ===== */}
+        <section className="about-hiw">
+          <div className="about-hiw-inner">
+            <h2 className="about-section-heading about-hiw-heading">How It Works</h2>
+            <p className="about-hiw-subtitle">
+              Our streamlined process translates raw complexity into clear pathways.
+            </p>
+
+            <div className="about-hiw-timeline">
+              {/* STEP 1 */}
+              <div className="about-hiw-step">
+                <div className="about-hiw-step-icon about-hiw-step-icon-normal">
+                  <span className="material-symbols-outlined">database</span>
+                </div>
+                <h4 className="about-hiw-step-title">1. Data Ingestion</h4>
+                <p className="about-hiw-step-desc">Aggregating historical cutoffs.</p>
+                <div className="about-hiw-connector about-hiw-connector-h" />
+              </div>
+
+              {/* STEP 2 */}
+              <div className="about-hiw-step">
+                <div className="about-hiw-step-icon about-hiw-step-icon-normal">
+                  <span className="material-symbols-outlined">query_stats</span>
+                </div>
+                <h4 className="about-hiw-step-title">2. Deep Analysis</h4>
+                <p className="about-hiw-step-desc">Processing trends via ML.</p>
+                <div className="about-hiw-connector about-hiw-connector-h" />
+              </div>
+
+              {/* STEP 3 - HIGHLIGHTED */}
+              <div className="about-hiw-step">
+                <div className="about-hiw-step-icon about-hiw-step-icon-primary">
+                  <span className="material-symbols-outlined">lightbulb</span>
+                </div>
+                <h4 className="about-hiw-step-title">3. Prediction</h4>
+                <p className="about-hiw-step-desc">Generating accurate forecasts.</p>
+                <div className="about-hiw-connector about-hiw-connector-h" />
+              </div>
+
+              {/* STEP 4 */}
+              <div className="about-hiw-step">
+                <div className="about-hiw-step-icon about-hiw-step-icon-normal">
+                  <span className="material-symbols-outlined">handshake</span>
+                </div>
+                <h4 className="about-hiw-step-title">4. Matching</h4>
+                <p className="about-hiw-step-desc">Finding your ideal fit.</p>
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
-      <footer className="about-footer">
-        <div className="footer-grid">
-          <div className="footer-brand">
-            <div className="footer-title">Cutoff Guide AI</div>
-            <p>© 2024 Cutoff Guide AI. Empowering academic excellence.</p>
+      {/* ===== FOOTER ===== */}
+      <footer className="about-site-footer">
+        <div className="about-footer-inner">
+          <div className="about-footer-brand">
+            <h3 className="about-footer-brand-title">Cutoff Guide AI</h3>
+            <p className="about-footer-brand-tagline">
+              Empowering students with AI-driven academic insights.
+            </p>
+            <p className="about-footer-brand-copy">
+              © 2024 Cutoff Guide AI. All rights reserved.
+            </p>
           </div>
-          <div className="footer-column">
-            <h4>Product</h4>
-            <a href="/colleges">Colleges</a>
-            <a href="/cutoff">Predictor</a>
-            <a href="/assistant">AI Assistant</a>
-          </div>
-          <div className="footer-column">
-            <h4>Company</h4>
-            <a href="/about">About Us</a>
-            <a href="/contact">Careers</a>
-          </div>
-          <div className="footer-column">
-            <h4>Support</h4>
-            <a href="/contact">Help Center</a>
-            <a href="/contact">Contact</a>
+
+          <div className="about-footer-cols">
+            <div className="about-footer-col">
+              <h4 className="about-footer-col-heading">PLATFORM</h4>
+              <Link to="/colleges" className="about-footer-link">Colleges</Link>
+              <Link to="/cutoff" className="about-footer-link">Predictor</Link>
+              <Link to="/compare" className="about-footer-link">Compare</Link>
+              <Link to="/assistant" className="about-footer-link">AI Assistant</Link>
+              <Link to="/saved" className="about-footer-link">Saved Colleges</Link>
+            </div>
+
+            <div className="about-footer-col">
+              <h4 className="about-footer-col-heading">COMPANY</h4>
+              <Link to="/about" className="about-footer-link about-footer-link-active">About</Link>
+              <Link to="/contact" className="about-footer-link">Contact</Link>
+              <Link to="/terms" className="about-footer-link">Terms</Link>
+            </div>
+
+            <div className="about-footer-col">
+              <h4 className="about-footer-col-heading">SUPPORT</h4>
+              <span
+                className="about-footer-link about-footer-link-muted"
+                onClick={() => navigate('/contact')}
+              >
+                Help Center
+              </span>
+              <span
+                className="about-footer-link about-footer-link-muted"
+                onClick={() => navigate('/contact')}
+              >
+                FAQs
+              </span>
+            </div>
           </div>
         </div>
       </footer>
