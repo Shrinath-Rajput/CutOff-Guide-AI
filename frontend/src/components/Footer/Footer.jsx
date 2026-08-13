@@ -15,18 +15,20 @@ const Footer = () => {
           <Link to="/colleges">Colleges</Link>
           <Link to="/cutoff">Predictor</Link>
           <Link to="/assistant">AI Assistant</Link>
+          <Link to="/compare">Compare</Link>
         </div>
 
         <div className="footer-column">
           <h4>Company</h4>
           <Link to="/about">About Us</Link>
-          <a href="#">Careers</a>
+          <Link to="/contact">Contact</Link>
+          <a href="#careers">Careers</a>
         </div>
 
         <div className="footer-column">
-          <h4>Support</h4>
-          <Link to="/contact">Help Center</Link>
-          <Link to="/contact">Contact</Link>
+          <h4>Legal</h4>
+          <Link to="/terms">Terms &amp; Conditions</Link>
+          <Link to="/privacy">Privacy Policy</Link>
         </div>
       </div>
     </footer>

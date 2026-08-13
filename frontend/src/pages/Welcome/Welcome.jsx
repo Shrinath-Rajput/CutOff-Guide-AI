@@ -1,140 +1,167 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Welcome.css';
 
-const stats = [
-  { value: '500+', label: 'Elite Colleges' },
-  { value: '95%', label: 'Prediction Accuracy' },
-  { value: '120K+', label: 'Successful Students' },
-];
-
-const features = [
+const bgImages = [
   {
-    icon: 'target',
-    title: 'AI Predictor',
-    description: 'Calculate your true admission chances based on historical cutoff data and real-time trends.',
+    alt: 'IIT Delhi',
+    src: 'https://lh3.googleusercontent.com/aida/AP1WRLt_SfeGuNAGsex-1IUq9gDMIyzNF5yrMlV2tLe2Kkj8vqptBqHwmiFZsHLn2X8I48NlnnyS67P_F2X8RHdGin_OA_2z2udNnglHvAonRF3O4pPktH7N1A5MpFo2EqbuNLQQ4MQDwBOKx4J28HBHQRd2NGLozu-5H-uK4Y7PYAK6vyiW9FDy1hvC5Ip7RN2nyq7tZbQ9ydFc0dEL2yyEZtxcCqHQG6An6e9ngMZ9LCN3DiQ5q7Gl8MtYbVs',
   },
   {
-    icon: 'explore',
-    title: 'Discovery Engine',
-    description: 'Uncover hidden gem institutions that perfectly align with your academic profile and career goals.',
+    alt: 'IIT Bombay',
+    src: 'https://lh3.googleusercontent.com/aida/AP1WRLthpBNX06PKmB9Hr7048okr6IY6sqM53bQYhCk6lb862nUHM8yw_nLd6xyX0RWMXR8tVp-nFUGFHaocwE-aYR984A9Ol493J3-0b_-9qMf_MdGLa2M_kRFvvQeis5mFppXKhe4vNzbObY2SlhBFqnmvFeDOZ-fSoipgguRH6sp6DilGz993DbXiMHHM5M0HvfaozGpSrt4NnrSvMQIgduIDuxfyDRQpxYXH5Gl5t1ryPvHCWRlXOqWPiFnc',
   },
   {
-    icon: 'compare_arrows',
-    title: 'Smart Compare',
-    description: 'Evaluate multiple colleges side-by-side using over 50 metric points from ROI to campus life.',
+    alt: 'IISc Bangalore',
+    src: 'https://lh3.googleusercontent.com/aida/AP1WRLtyM_wIGUvM8yepWSQmC3S3OQiTOQThxAs94VINQwqq1Wv-goQCi-aHfEFRqBUQvWszo-6nUAP7xhkLWDhll-fGm5x_x5mX8dGoxq-ufwY9cO01hpxq1Gu2PJ4qmGsgEIT2oC5Jr30Wnd174WAvtsMp3N5O5TfoX2DCZRuEwmSfpnXkVGUEVGe3Gsh0UmFbEKebTsUtZYOkNGb7XWlRm5qhHcBuoTb7zwFnB1mQNWTw1ufU9V60GnCFsz5D',
   },
 ];
 
 const Welcome = () => {
   const navigate = useNavigate();
+  const [bgIndex, setBgIndex] = useState(1);
+  const mainContainerRef = useRef(null);
+  const heroMainRef = useRef(null);
+  const heroContentRef = useRef(null);
+  const headerLogoRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgIndex((prev) => (prev + 1) % bgImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const tiltContainer = heroMainRef.current;
+    const tiltContent = heroContentRef.current;
+    if (!tiltContainer || !tiltContent) return undefined;
+
+    const handleMove = (e) => {
+      const rect = tiltContainer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -3;
+      const rotateY = ((x - centerX) / centerX) * 3;
+      tiltContent.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+    };
+
+    const handleLeave = () => {
+      tiltContent.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    };
+
+    tiltContainer.addEventListener('mousemove', handleMove);
+    tiltContainer.addEventListener('mouseleave', handleLeave);
+    return () => {
+      tiltContainer.removeEventListener('mousemove', handleMove);
+      tiltContainer.removeEventListener('mouseleave', handleLeave);
+    };
+  }, []);
+
+  useEffect(() => {
+    const mainContainer = mainContainerRef.current;
+    const headerLogo = headerLogoRef.current;
+    if (!mainContainer || !headerLogo) return undefined;
+
+    const handleMove = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 15;
+      const y = (e.clientY / window.innerHeight - 0.5) * 15;
+      headerLogo.style.transform = `translate(${x}px, ${y}px)`;
+    };
+
+    const handleLeave = () => {
+      headerLogo.style.transform = 'translate(0px, 0px)';
+    };
+
+    mainContainer.addEventListener('mousemove', handleMove);
+    mainContainer.addEventListener('mouseleave', handleLeave);
+    return () => {
+      mainContainer.removeEventListener('mousemove', handleMove);
+      mainContainer.removeEventListener('mouseleave', handleLeave);
+    };
+  }, []);
 
   return (
-    <div className="welcome-shell">
-      <header className="welcome-topbar">
-        <button type="button" className="icon-button" aria-label="Menu">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <div className="welcome-brand">Cut-Off Guide AI</div>
-        <button type="button" className="icon-button" aria-label="Search">
-          <span className="material-symbols-outlined">search</span>
-        </button>
-      </header>
+    <div className="welcome-body">
+      <div className="welcome-bg-slider">
+        {bgImages.map((img, idx) => (
+          <img
+            key={img.alt}
+            alt={img.alt}
+            className={`welcome-bg-image ${idx === bgIndex ? 'welcome-bg-image-active' : ''}`}
+            src={img.src}
+          />
+        ))}
+        <div className="welcome-bg-overlay" />
+      </div>
 
-      <main className="welcome-canvas">
-        <section className="hero-panel">
-          <div className="hero-copy">
-            <div className="hero-badge">
-              <span className="material-symbols-outlined fill-icon">temp_preferences_custom</span>
-              AI POWERED
-            </div>
-            <h1>Your Future.<br />Your College.<br />Your Choice.</h1>
-            <p>
-              Navigate the complexities of elite higher education admissions with precision. Our AI-driven intelligence provides clarity, not just data.
+      <div className="welcome-container" ref={mainContainerRef}>
+        <header className="welcome-header">
+          <div className="welcome-logo" ref={headerLogoRef}>
+            <img
+              alt="CutoffGuide Logo"
+              className="welcome-logo-img"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmJ8FfY3-DdAVKDZSXstVx8X6kxtsWOnhI7PR5iZuTUqz8ouifw73JOOm4s1u3RwlEQIswn4sRegRkSkOecYfrazfg8Xdfa_bmAYrOICASuoaEpDfNkjyabV6rR8oyJS5x8VblV3lWOWB3PT0bNVvAasmELwx_f05PbjJ32-CeA6yRDtLTqXEesQF-ZKJZn7Jl51RBujvjFj1riAcGT64anBZGC6xRKPQUhze-dEa5q0WpVpHcju2cjg"
+            />
+            <span className="welcome-logo-text">CutoffGuide</span>
+          </div>
+        </header>
+
+        <main className="welcome-hero" ref={heroMainRef}>
+          <div className="welcome-hero-content" ref={heroContentRef}>
+            <h1 className="welcome-hero-title welcome-fade-up welcome-fade-up-1">
+              Navigate Your Future with
+            </h1>
+            <p className="welcome-hero-desc welcome-fade-up welcome-fade-up-2">
+              AI-Powered Competitive Exam &amp; College Guidance Platform designed for the next generation of scholars. Get personalized predictions, compare institutions, and chart your optimal academic path.
             </p>
-            <div className="hero-actions">
-              <button type="button" className="hero-cta hero-cta--primary" onClick={() => navigate('/login')}>
-                Start Your Journey
+            <div className="welcome-hero-actions welcome-fade-up welcome-fade-up-3">
+              <button
+                type="button"
+                className="welcome-hero-btn"
+                onClick={() => navigate('/login')}
+              >
+                <div className="welcome-hero-btn-shine" />
+                <span className="welcome-hero-btn-text">Start Your Journey</span>
+                <span className="material-symbols-outlined welcome-hero-btn-icon">
+                  arrow_forward
+                </span>
               </button>
-              <button type="button" className="hero-cta hero-cta--secondary" onClick={() => navigate('/colleges')}>
-                Explore Colleges
-              </button>
-            </div>
-            <div className="hero-stats">
-              {stats.map((item) => (
-                <div key={item.label} className="hero-stat">
-                  <strong>{item.value}</strong>
-                  <span>{item.label}</span>
-                </div>
-              ))}
             </div>
           </div>
+        </main>
 
-          <div className="hero-visual">
-            <div className="hero-image">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBTmnfvvw6sQtUDMxSBbwM9pLOQ05foYgSF8JFMhoHEl9W55_nffqcH5yKGi5xTcgt29Wl0R9i9Xk7kfcjk3oHJazQkVAnh2GQPGwiwFrEuBHk3h1rEBSxSMARuwow_Q0VJrjo0E8w6arK9c6Ha26ieheJL5Fwpch5Gk4yE9jH5ytELuKfn1vH6ropmjMK4P1BIkxmmXzfJsSvazK4uSfzO4fXy-6jPFC8Duv-vv8NoeI_rVpYcuKj"
-                alt="Elite college campus"
-              />
-              <div className="hero-glass-card">
-                <div>
-                  <div className="glass-label">AI Insight</div>
-                  <p>Admission Probability High</p>
-                </div>
-                <div className="glass-icon">
-                  <span className="material-symbols-outlined">trending_up</span>
-                </div>
-              </div>
-            </div>
+        <footer className="welcome-footer">
+          <p className="welcome-footer-copy">
+            © 2024 CutoffGuide. Developed by Fourise Software Solutions Pvt. Ltd.
+          </p>
+          <div className="welcome-footer-links">
+            <button
+              type="button"
+              className="welcome-footer-link welcome-footer-link-btn"
+              onClick={() => navigate('/about')}
+            >
+              Developer Credits
+            </button>
+            <button
+              type="button"
+              className="welcome-footer-link welcome-footer-link-btn"
+              onClick={() => navigate('/privacy')}
+            >
+              Privacy Policy
+            </button>
+            <button
+              type="button"
+              className="welcome-footer-link welcome-footer-link-btn"
+              onClick={() => navigate('/terms')}
+            >
+              Terms of Service
+            </button>
           </div>
-        </section>
-
-        <section className="feature-grid">
-          {features.map((feature) => (
-            <article key={feature.title} className="feature-card">
-              <div className="feature-icon">
-                <span className="material-symbols-outlined">{feature.icon}</span>
-              </div>
-              <div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </div>
-            </article>
-          ))}
-        </section>
-
-        <section className="process-section">
-          <div className="process-heading">
-            <h2>The Methodology</h2>
-            <p>A structured, data-driven path from confusion to conviction.</p>
-          </div>
-          <div className="process-steps">
-            {[
-              { label: 'Profile', detail: 'Input scores & preferences.' },
-              { label: 'Analysis', detail: 'AI cross-references data.' },
-              { label: 'Prediction', detail: 'Generate probability matrix.' },
-              { label: 'Matching', detail: 'Filter by strict criteria.' },
-              { label: 'Recommend', detail: 'Final curated list.' },
-            ].map((step, index) => (
-              <div key={step.label} className={`process-step ${index === 2 ? 'process-step--active' : ''}`}>
-                <div className="process-step__index">0{index + 1}</div>
-                <div>
-                  <h4>{step.label}</h4>
-                  <p>{step.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <footer className="welcome-footer">
-        <p>© 2026 Cut-Off Guide AI. Premium Academic Intelligence.</p>
-        <div className="footer-actions">
-          <button type="button" onClick={() => navigate('/terms')}>Terms of Service</button>
-          <button type="button" onClick={() => navigate('/about')}>About</button>
-          <button type="button" onClick={() => navigate('/contact')}>Contact</button>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };
