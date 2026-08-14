@@ -1,56 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import './Colleges.css';
 
-const collegeItems = [
-  {
-    id: 'stanford',
-    rank: 1,
-    name: 'Stanford University',
-    rating: '4.9',
-    location: 'Stanford, California',
-    courses: ['CS', 'Engineering', 'MBA'],
-    feeLabel: '$56,000 / yr',
-    feeValue: 56000,
-    cutoff: '99.5%',
-    type: 'Private',
-    state: 'California',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuD3H4oNg_SwTzfTRJUPh6bA5a-OfI5-D3XguxBR_lRbk8HA8O5-jhDydRrQD8z3Oyev61VGU0sFJx4oDSSu7mN65Yq4JTGAh4PW6_y3LUMAuGxDLlm_QDg7oyc1bdYfbjYN4U8YWmsL8OwcEBzAY6cwN1vWkszJMHr8hi64Du10zvpy4DMkCvcAhnih5JwutryffQlRGG3K_ULjqKQgpMXQQIce1R9JsWIj0jWzmZ8ZkAYDkGAaJ00t',
-  },
-  {
-    id: 'mit',
-    rank: 2,
-    name: 'Massachusetts Institute of Technology',
-    rating: '4.9',
-    location: 'Cambridge, Massachusetts',
-    courses: ['Engineering', 'CS', 'Physics'],
-    feeLabel: '$55,450 / yr',
-    feeValue: 55450,
-    cutoff: '99.6%',
-    type: 'Private',
-    state: 'Massachusetts',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDQk4oxUU88rmboCZNrKn7NmNMTquKZmbwKE8LYu6_mcvyR7whaRD08AhIN83wD4gbM39SxjMtoEsSory7uusYWgRRBoeto6XV6RxREUo67gO7_tfG5Wzqk_RhflUcnSXZ6gcJs3YwAwXm53GNJAzuzI7iYhS1mCZFUGRdwDNvpUiizKKozEk7YWUIZ1gEMzpLbFcFBZAtSxC9xaLEbK9DnT3bLkr1NBb4nn1I5BmhBOu73MSgXk6oY',
-  },
-  {
-    id: 'harvard',
-    rank: 3,
-    name: 'Harvard University',
-    rating: '4.8',
-    location: 'Cambridge, Massachusetts',
-    courses: ['Law', 'Business', 'Med'],
-    feeLabel: '$54,269 / yr',
-    feeValue: 54269,
-    cutoff: '99.4%',
-    type: 'Private',
-    state: 'Massachusetts',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCY90ZS6vJTCwESsN-6T-V3ClglcvdauGVb0Q7ToUByMjp7YRvaAquogP64vo3hhdibvhKxlX_LiVm-usPlXRiqmR0eLzln3KFt_pXncv9QY3qVUNC1cS5AjGwub6IBzOr0IJjTnh_OeSICEQ65iJfNrA0818qdlDO4GVDYYNbQ-J2e0UKgSMxl5px5utybrLMwSWcyo-yEXCpfzLdgSaBgn4HmWU2XqBtSCd-7VawhlOR3TguYIl8a',
-  },
-];
+import { getColleges } from '../../services/api';
 
 const stateOptions = ['California', 'New York', 'Massachusetts'];
 const courseOptions = ['Computer Science', 'Engineering', 'Business'];
@@ -59,10 +13,9 @@ const sortOptions = [
   { value: 'ranking', label: 'Sort by: Ranking (High to Low)' },
   { value: 'fees', label: 'Sort by: Fees (Low to High)' },
 ];
-const totalCollegeCount = 482;
-const displayedPages = [1, 2, 3, 48];
 
 const Colleges = () => {
+  const navigate = useNavigate();
   const searchInputRef = useRef(null);
   const [search, setSearch] = useState('');
   const [selectedStates, setSelectedStates] = useState([]);
@@ -74,10 +27,39 @@ const Colleges = () => {
   const [bookmarked, setBookmarked] = useState({});
   const [compareSelected, setCompareSelected] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [collegeItems, setCollegeItems] = useState([]);
+  const [totalCollegeCount, setTotalCollegeCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const params = {
+          page: currentPage,
+          limit: 10,
+          search: search.trim() || undefined,
+          states: selectedStates.length ? selectedStates : undefined,
+          courses: selectedCourses.length ? selectedCourses : undefined,
+          max_fee: feeValue < 100000 ? feeValue : undefined,
+          college_type: selectedType || undefined,
+          sort: sortOption !== 'relevance' ? sortOption : undefined,
+        };
+        const data = await getColleges(params);
+        setCollegeItems(data.data);
+        setTotalCollegeCount(data.total);
+        setTotalPages(data.total_pages);
+      } catch (error) {
+        console.error('Failed to fetch colleges:', error);
+      }
+    };
+    
+    const timeoutId = setTimeout(fetchColleges, 300);
+    return () => clearTimeout(timeoutId);
+  }, [search, selectedStates, selectedCourses, feeValue, selectedType, sortOption, currentPage]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, selectedStates, selectedCourses, feeValue, selectedType]);
+  }, [search, selectedStates, selectedCourses, feeValue, selectedType, sortOption]);
 
   const toggleSelection = (value, selectedValues, setSelectedValues) => {
     if (selectedValues.includes(value)) {
@@ -91,62 +73,22 @@ const Colleges = () => {
     searchInputRef.current?.focus();
   };
 
-  const filteredColleges = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+  const displayStart = collegeItems.length ? (currentPage - 1) * 10 + 1 : 0;
+  const displayEnd = collegeItems.length ? Math.min(currentPage * 10, totalCollegeCount) : 0;
 
-    return collegeItems.filter((college) => {
-      if (normalizedSearch) {
-        const matchesSearch = [college.name, college.location, ...college.courses]
-          .some((text) => text.toLowerCase().includes(normalizedSearch));
-        if (!matchesSearch) {
-          return false;
-        }
-      }
-
-      if (selectedStates.length && !selectedStates.includes(college.state)) {
-        return false;
-      }
-
-      if (selectedCourses.length) {
-        const hasCourse = selectedCourses.some((course) => college.courses.includes(course));
-        if (!hasCourse) {
-          return false;
-        }
-      }
-
-      if (feeValue < college.feeValue) {
-        return false;
-      }
-
-      if (selectedType && college.type !== selectedType) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [search, selectedStates, selectedCourses, feeValue, selectedType]);
-
-  const sortedColleges = useMemo(() => {
-    const sorted = [...filteredColleges];
-
-    if (sortOption === 'ranking') {
-      sorted.sort((a, b) => a.rank - b.rank);
+  const getDisplayedPages = () => {
+    const pages = [];
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + 4);
+    if (end - start < 4) {
+       start = Math.max(1, end - 4);
     }
-
-    if (sortOption === 'fees') {
-      sorted.sort((a, b) => a.feeValue - b.feeValue);
+    for (let i = start; i <= end; i++) {
+       pages.push(i);
     }
-
-    return sorted;
-  }, [filteredColleges, sortOption]);
-
-  const visibleColleges = useMemo(
-    () => sortedColleges.slice((currentPage - 1) * 10, currentPage * 10),
-    [sortedColleges, currentPage]
-  );
-
-  const displayStart = visibleColleges.length ? (currentPage - 1) * 10 + 1 : 0;
-  const displayEnd = visibleColleges.length ? Math.min(currentPage * 10, sortedColleges.length) : 0;
+    return pages;
+  };
+  const dynamicDisplayedPages = getDisplayedPages();
 
   const toggleBookmark = (id) => {
     setBookmarked((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -154,6 +96,13 @@ const Colleges = () => {
 
   const toggleCompare = (id) => {
     setCompareSelected((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const selectedCompareCount = Object.values(compareSelected).filter(Boolean).length;
+
+  const handleCompareNavigate = () => {
+    const selectedIds = Object.keys(compareSelected).filter((id) => compareSelected[id]);
+    navigate(`/compare?ids=${selectedIds.join(',')}`);
   };
 
   const clearAllFilters = () => {
@@ -288,7 +237,7 @@ const Colleges = () => {
           <section className="results-column">
             <div className="results-toolbar">
               <p>
-                Showing <strong>{displayStart}-{displayEnd || (sortedColleges.length ? 10 : 0)}</strong> of <strong>{totalCollegeCount}</strong> Colleges
+                Showing <strong>{displayStart}-{displayEnd}</strong> of <strong>{totalCollegeCount}</strong> Colleges
               </p>
               <div className="results-actions">
                 <button type="button" className="mobile-filter-toggle" onClick={() => setMobileFiltersOpen(true)}>
@@ -306,7 +255,7 @@ const Colleges = () => {
             </div>
 
             <div className="cards-list">
-              {visibleColleges.map((college) => (
+              {collegeItems.map((college) => (
                 <article key={college.id} className="college-card">
                   <div className="card-image">
                     <img src={college.image} alt={college.name} />
@@ -360,6 +309,7 @@ const Colleges = () => {
                           type="checkbox"
                           checked={!!compareSelected[college.id]}
                           onChange={() => toggleCompare(college.id)}
+                          disabled={!compareSelected[college.id] && selectedCompareCount >= 4}
                         />
                         <span className="compare-checkbox-box">
                           <span className="material-symbols-outlined">check</span>
@@ -385,7 +335,7 @@ const Colleges = () => {
                 <span className="material-symbols-outlined">chevron_left</span>
               </button>
 
-              {displayedPages.map((pageNumber) => (
+              {dynamicDisplayedPages.map((pageNumber) => (
                 <button
                   key={pageNumber}
                   type="button"
@@ -399,8 +349,8 @@ const Colleges = () => {
               <button
                 type="button"
                 className="pagination-button"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, 48))}
-                disabled={currentPage === 48}
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage >= totalPages}
               >
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>
@@ -511,6 +461,31 @@ const Colleges = () => {
           </div>
         </div>
       </div>
+
+      {selectedCompareCount > 0 && (
+        <div className="compare-banner">
+          <div className="compare-banner-content">
+            <p>{selectedCompareCount} {selectedCompareCount === 1 ? 'college' : 'colleges'} selected for comparison (Max 4)</p>
+            <div className="compare-banner-actions">
+              <button 
+                type="button" 
+                className="compare-banner-btn secondary"
+                onClick={() => setCompareSelected({})}
+              >
+                Clear
+              </button>
+              <button 
+                type="button" 
+                className="compare-banner-btn primary"
+                onClick={handleCompareNavigate}
+                disabled={selectedCompareCount < 2}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

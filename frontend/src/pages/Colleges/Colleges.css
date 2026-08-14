@@ -821,3 +821,65 @@
     justify-content: center;
   }
 }
+
+/* Compare Banner Styles */
+.compare-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid #e2bfb0;
+  box-shadow: 0 -4px 20px rgba(20, 33, 61, 0.08);
+  padding: 16px 24px;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+
+.compare-banner-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1280px;
+}
+
+.compare-banner-content p {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1c1a;
+  margin: 0;
+}
+
+.compare-banner-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.compare-banner-btn {
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.compare-banner-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compare-banner-btn.primary {
+  background: #a04100;
+  color: #ffffff;
+}
+
+.compare-banner-btn.secondary {
+  background: transparent;
+  color: #5a4136;
+  border: 1px solid #e2bfb0;
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { searchCutoffs } from '../../services/api';
 import MainLayout from '../../components/MainLayout/MainLayout';
 import SectionHeader from '../../components/SectionHeader/SectionHeader';
 import Button from '../../components/Button/Button';
@@ -13,9 +14,14 @@ const Cutoff = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setResult({ cutoff: '178', rank: '6500', suggestion: 'VJTI Mumbai, PICT Pune, COEP' });
+    try {
+      const data = await searchCutoffs(form);
+      setResult(data);
+    } catch (error) {
+      console.error('Failed to search cutoffs:', error);
+    }
   };
 
   return (

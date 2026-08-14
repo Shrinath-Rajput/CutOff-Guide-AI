@@ -31,3 +31,18 @@ export const googleAuth = async (user) => {
   const response = await api.post('/api/auth/google', user);
   return response.data;
 };
+
+export const getColleges = async (params = {}) => {
+  const response = await api.get('/api/colleges', { params });
+  return response.data;
+};
+
+export const searchCutoffs = async (payload) => {
+  const response = await api.post('/api/cutoffs/search', payload);
+  return response.data;
+};
+
+export const getCollegeById = async (id) => {
+  const response = await api.get(`/api/colleges/${id}`);
+  return response.data;
+};
