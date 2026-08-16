@@ -42,6 +42,13 @@ app.include_router(admin.router)
 app.include_router(colleges.router)
 app.include_router(cutoffs.router)
 
+@app.get("/", tags=["Root"])
+async def root():
+    return {
+        "message": "Welcome to the CutoffGrid API! Visit /docs for documentation.",
+        "status": "online"
+    }
+
 @app.get("/api/health", tags=["Health"])
 async def health_check():
     db = get_db()
