@@ -143,7 +143,16 @@ async def google_auth(request: GoogleAuthRequest):
         # Since Vite uses VITE_, backend might use GOOGLE_CLIENT_ID, but let's check both
         client_id = os.getenv("GOOGLE_CLIENT_ID") or os.getenv("VITE_GOOGLE_CLIENT_ID")
         
-        idinfo = id_token.verify_oauth2_token(request.token, requests.Request(), client_id)
+        token = request.token
+        if token.count('.') == 2:
+            idinfo = id_token.verify_oauth2_token(token, requests.Request(), client_id)
+        else:
+            import urllib.request
+            import json
+            req_url = "https://www.googleapis.com/oauth2/v3/userinfo"
+            req_obj = urllib.request.Request(req_url, headers={"Authorization": f"Bearer {token}"})
+            with urllib.request.urlopen(req_obj) as response:
+                idinfo = json.loads(response.read().decode())
         
         user_payload = UserLogin(
             uid=f"google-{idinfo['sub']}",
