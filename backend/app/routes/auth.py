@@ -5,9 +5,12 @@ import secrets
 
 from app.core.database import get_db
 from app.core.security import create_access_token
-from app.schemas.user import UserLogin, UserCreate, UserResponse
+from app.schemas.user import UserLogin, UserCreate, UserResponse, GoogleAuthRequest
 from app.services.auth_service import send_otp_sms, verify_otp_sms
 from bson import ObjectId
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import os
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
@@ -134,6 +137,22 @@ async def login(request: UserLogin):
     return await create_or_update_user(request, db)
 
 @router.post("/google")
-async def google_auth(request: UserLogin):
-    db = get_db()
-    return await create_or_update_user(request, db)
+async def google_auth(request: GoogleAuthRequest):
+    try:
+        # Get the VITE_GOOGLE_CLIENT_ID from environment or use a placeholder if not set
+        # Since Vite uses VITE_, backend might use GOOGLE_CLIENT_ID, but let's check both
+        client_id = os.getenv("GOOGLE_CLIENT_ID") or os.getenv("VITE_GOOGLE_CLIENT_ID")
+        
+        idinfo = id_token.verify_oauth2_token(request.token, requests.Request(), client_id)
+        
+        user_payload = UserLogin(
+            uid=f"google-{idinfo['sub']}",
+            email=idinfo.get('email'),
+            name=idinfo.get('name'),
+            provider="google",
+            photoURL=idinfo.get('picture')
+        )
+        db = get_db()
+        return await create_or_update_user(user_payload, db)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid Google token")

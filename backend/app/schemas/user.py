@@ -37,3 +37,6 @@ class UserLogin(BaseModel):
     name: Optional[str] = None
     provider: Optional[str] = "phone"
     photoURL: Optional[str] = None
+
+class GoogleAuthRequest(BaseModel):
+    token: str

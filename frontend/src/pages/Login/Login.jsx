@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { sendOtp, verifyOtp } from '../../services/api';
+import { sendOtp, verifyOtp, googleAuth } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 import './Login.css';
 
 const Login = () => {
@@ -231,32 +232,33 @@ const Login = () => {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setIsGoogleSigning(true);
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-    const url = `${apiBase}/api/auth/google`;
-
-    try {
-      const resp = await fetch(url, { method: 'GET', credentials: 'include', redirect: 'manual' });
-
-      if (resp && resp.status === 501) {
-        const data = await resp.json().catch(() => null);
-        const message =
-          (data && data.message) || 'Google sign-in is not configured yet. Please contact the administrator.';
-        toast.error(message);
-        return;
-      }
-
-      window.location.href = url;
-    } catch (err) {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsGoogleSigning(true);
       try {
-        window.location.href = url;
-      } catch (e) {
-        toast.error('Google sign-in is not configured yet. Please contact the administrator.');
+        const data = await googleAuth({ token: tokenResponse.access_token });
+        if (data && data.status === 'success' && data.user) {
+          login(data.user, data.token);
+          toast.success('Successfully logged in with Google!');
+          navigate('/dashboard'); // or where you want them to go
+        } else {
+          toast.error(data.message || 'Google login failed');
+        }
+      } catch (err) {
+        toast.error('Error connecting to server for Google Sign In');
+      } finally {
+        setIsGoogleSigning(false);
       }
-    } finally {
+    },
+    onError: () => {
+      toast.error('Google login failed');
       setIsGoogleSigning(false);
     }
+  });
+
+  const handleGoogleSignIn = () => {
+    setIsGoogleSigning(true);
+    googleLogin();
   };
 
   const currentPendingPhone = pendingPhone
