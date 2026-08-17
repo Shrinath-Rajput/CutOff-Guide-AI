@@ -16,9 +16,17 @@ from flask import Blueprint, jsonify, redirect, request
 
 from config import get_users_collection
 
+try:
+    import firebase_admin
+    from firebase_admin import auth as firebase_auth
+except ImportError:  # pragma: no cover
+    firebase_admin = None
+    firebase_auth = None
+
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 FAST_TO_SMS_API_KEY = os.getenv("FAST_TO_SMS_API_KEY")
+OTP_MODE = (os.getenv("OTP_MODE", "development") or "development").strip().lower()
 COMPANY_GOOGLE_AUTH_URL = os.getenv("COMPANY_GOOGLE_AUTH_URL")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
@@ -29,23 +37,265 @@ GOOGLE_OAUTH_REDIRECT_URI = os.getenv(
 FRONTEND_APP_URL = os.getenv("FRONTEND_APP_URL", "http://localhost:5173")
 OTP_TTL_SECONDS = int(os.getenv("OTP_TTL_SECONDS", "300"))
 
+SMS_PROVIDER = (os.getenv("SMS_PROVIDER", "fast2sms") or "fast2sms").strip().lower()
+SMS_SENDER_ID = (os.getenv("SMS_SENDER_ID", "FSTSMS") or "FSTSMS").strip()
+SMS_ROUTE = (os.getenv("SMS_ROUTE", "q") or "q").strip().lower()
+SMS_TEMPLATE_ID = (os.getenv("SMS_TEMPLATE_ID") or "").strip()
+SMS_ENTITY_ID = (os.getenv("SMS_ENTITY_ID") or os.getenv("SMS_PE_ID") or "").strip()
+SMS_LANGUAGE = (os.getenv("SMS_LANGUAGE", "english") or "english").strip().lower()
+SMS_FLASH = (os.getenv("SMS_FLASH", "0") or "0").strip()
+
 OTP_SESSIONS = {}
 OTP_PHONE_LOOKUPS = {}
 OTP_LOCK = threading.Lock()
+
+
+def _initialize_firebase_admin():
+    if firebase_admin is None:
+        return False
+
+    if firebase_admin._apps:
+        return True
+
+    try:
+        firebase_admin.initialize_app()
+        return True
+    except Exception:
+        service_account_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON")
+        if service_account_json:
+            try:
+                account_info = json.loads(service_account_json)
+                firebase_admin.initialize_app(
+                    credentials=firebase_admin.credentials.Certificate(account_info),
+                    options={"projectId": account_info.get("project_id")},
+                )
+                return True
+            except Exception:
+                logging.exception("Firebase Admin initialization with service account JSON failed")
+                return False
+
+        firebase_project_id = os.getenv("FIREBASE_PROJECT_ID")
+        if firebase_project_id:
+            try:
+                firebase_admin.initialize_app(options={"projectId": firebase_project_id})
+                return True
+            except Exception:
+                logging.exception("Firebase Admin initialization with project ID failed")
+                return False
+
+        return False
+
+
+def _verify_firebase_id_token(id_token):
+    if not id_token:
+        raise ValueError("Firebase ID token is missing")
+
+    if firebase_admin is None or firebase_auth is None:
+        raise RuntimeError("Firebase Admin SDK is not installed")
+
+    if not _initialize_firebase_admin():
+        raise RuntimeError("Firebase Admin is not configured on the backend")
+
+    try:
+        decoded_token = firebase_auth.verify_id_token(id_token)
+        return decoded_token
+    except Exception as exc:
+        raise ValueError("Invalid or expired Firebase ID token") from exc
 
 
 def build_otp_sms_message(otp):
     return f"Your verification OTP is {otp}. It is valid for 5 minutes."
 
 
-def build_fast2sms_bulk_request(phone, message):
-    return {
+def build_fast2sms_bulk_request(phone, message, otp=None):
+    """
+    Build Fast2SMS bulkV2 request payload.
+
+    Fast2SMS route documentation note from provider response:
+      - route "otp"  : DOES NOT accept free-form "message"; requires:
+          * variables_values = numeric OTP digits only (comma-separated for multiple vars
+          * template_id          = registered OTP template
+          * numbers, sender_id, route=otp
+      - route "q" / "t" / "dlt" / "p" : use free-form "message"
+    
+    IMPORTANT: For SMS_ROUTE="q", the request should NOT include sender_id to match
+    the proven Fast2SMS bulkV2 API contract that was working before backend integration.
+    """
+    if SMS_ROUTE == "otp":
+        params = {
+            "numbers": phone,
+            "route": "otp",
+            "sender_id": SMS_SENDER_ID,
+            "variables_values": str(otp) if otp is not None else "",
+        }
+        if SMS_TEMPLATE_ID:
+            params["template_id"] = SMS_TEMPLATE_ID
+        if SMS_ENTITY_ID:
+            params["entity_id"] = SMS_ENTITY_ID
+        return params
+
+    # For route "q" (Quick/Transactional), use the minimal proven request format
+    # that was successfully sending real SMS before backend integration
+    if SMS_ROUTE == "q":
+        return {
+            "numbers": phone,
+            "message": message,
+            "sender_id": SMS_SENDER_ID,
+            "route": "q",
+            "language": SMS_LANGUAGE,
+            "flash": SMS_FLASH,
+        }
+
+    # For other routes (dlt, t, p), include full configuration
+    params = {
         "numbers": phone,
         "message": message,
-        "route": "q",
-        "language": "english",
-        "flash": "0",
+        "sender_id": SMS_SENDER_ID,
+        "route": SMS_ROUTE,
+        "language": SMS_LANGUAGE,
+        "flash": SMS_FLASH,
     }
+    if SMS_TEMPLATE_ID:
+        params["template_id"] = SMS_TEMPLATE_ID
+    if SMS_ENTITY_ID:
+        params["entity_id"] = SMS_ENTITY_ID
+    return params
+
+
+def validate_fast2sms_production_config():
+    if OTP_MODE != "production":
+        return
+
+    if not FAST_TO_SMS_API_KEY:
+        raise RuntimeError("FAST_TO_SMS_API_KEY is not configured")
+
+    if SMS_ROUTE == "otp" and not SMS_TEMPLATE_ID:
+        raise RuntimeError(
+            "SMS_ROUTE=otp requires SMS_TEMPLATE_ID to be set in backend/.env. "
+            "Register an approved OTP template on Fast2SMS and paste its ID into the .env file."
+        )
+
+    if SMS_SENDER_ID.upper() == "FSTSMS":
+        logging.warning(
+            "[AUTH] SMS sender_id is using the generic Fast2SMS test sender 'FSTSMS'. For real India delivery, "
+            "replace it with a DLT-registered sender ID in backend/.env."
+        )
+
+
+def is_fast2sms_success(parsed_response=None, status_code=None, body=None):
+    if isinstance(parsed_response, dict):
+        message_value = parsed_response.get("message")
+        if isinstance(message_value, list):
+            message_value = " ".join(str(item) for item in message_value if item)
+        message_text = " ".join(
+            str(value)
+            for value in [
+                message_value,
+                parsed_response.get("status"),
+                parsed_response.get("status_code"),
+                parsed_response.get("return"),
+            ]
+            if value is not None
+        ).lower()
+        rejection_markers = (
+            "blocked",
+            "dnd",
+            "rejected",
+            "invalid",
+            "insufficient",
+            "wallet balance",
+            "wallet",
+            "unauthorized",
+            "authentication",
+            "template",
+            "sender",
+            "not sent",
+            "failed",
+            "failure",
+            "error",
+            "not delivered",
+        )
+        if any(marker in message_text for marker in rejection_markers):
+            return False
+
+        return_value = parsed_response.get("return")
+        if return_value is False or str(return_value).lower() in {"false", "0"}:
+            return False
+
+        status_value = str(parsed_response.get("status", "")).lower()
+        if status_value in {"false", "fail", "failed", "error", "rejected"}:
+            return False
+
+    if status_code is not None:
+        try:
+            status_int = int(status_code)
+            if not (200 <= status_int < 300):
+                return False
+        except (TypeError, ValueError):
+            pass
+
+    if isinstance(parsed_response, dict):
+        return_value = parsed_response.get("return")
+        if return_value in (True, "true", "True", "1", 1):
+            return True
+        if str(parsed_response.get("status", "")).lower() == "success":
+            return True
+        message_value = parsed_response.get("message")
+        if isinstance(message_value, list):
+            message_value = " ".join(str(item) for item in message_value if item)
+        if isinstance(message_value, str) and "success" in message_value.lower():
+            return True
+        if parsed_response.get("request_id"):
+            return True
+
+    if isinstance(body, str):
+        lowered = body.lower()
+        if "sms sent successfully" in lowered or "request_id" in lowered:
+            return True
+
+    return False
+
+
+def format_fast2sms_error_message(parsed_response=None, status_code=None, body=None):
+    details = []
+
+    if status_code is not None:
+        details.append(f"HTTP {status_code}")
+
+    if isinstance(parsed_response, dict):
+        provider_status = parsed_response.get("status_code")
+        if provider_status is not None and "HTTP" not in " ".join(details):
+            details.append(f"HTTP {provider_status}")
+
+        message = parsed_response.get("message")
+        if isinstance(message, list):
+            message = " ".join(str(item) for item in message if item)
+        if message:
+            details.append(str(message))
+    elif body:
+        details.append(str(body))
+
+    if not details:
+        details.append("Unknown Fast2SMS provider error")
+
+    return f"Fast2SMS rejected the OTP request: {' | '.join(details)}"
+
+
+def _sanitize_fast2sms_payload(payload):
+    if isinstance(payload, dict):
+        allowed = {}
+        for key in ("return", "status", "status_code", "request_id", "message"):
+            if key in payload:
+                value = payload[key]
+                if isinstance(value, list):
+                    value = " ".join(str(item) for item in value if item)
+                if isinstance(value, str):
+                    value = value[:500]
+                allowed[key] = value
+        return allowed
+    if isinstance(payload, str):
+        return payload[:500]
+    return payload
 
 
 def register_routes(app):
@@ -210,19 +460,45 @@ def register_routes(app):
             raise RuntimeError("Phone number is required")
 
         message = build_otp_sms_message(otp)
-        request_params = build_fast2sms_bulk_request(normalized_phone, message)
+        validate_fast2sms_production_config()
 
-        logging.info("[AUTH] Using plain Fast2SMS SMS route")
-        logging.info("[AUTH] Fast2SMS endpoint: https://www.fast2sms.com/dev/bulkV2")
-        logging.info("[AUTH] Fast2SMS route: q")
+        if SMS_ROUTE == "otp" and not SMS_TEMPLATE_ID:
+            logging.error(
+                "[AUTH] SMS_ROUTE=otp was selected but SMS_TEMPLATE_ID is empty. "
+                "Fast2SMS route='otp' REQUIRES a pre-registered OTP template ID. "
+                "Either set SMS_TEMPLATE_ID in .env, or change SMS_ROUTE to 'q' (Quick/Transactional route) for free-form text SMS."
+            )
+            raise RuntimeError(
+                "SMS_ROUTE=otp requires SMS_TEMPLATE_ID to be set in backend/.env. "
+                "Either register an OTP template on the Fast2SMS dashboard and paste its ID into SMS_TEMPLATE_ID=, "
+                "or change SMS_ROUTE=q to use the transactional Quick route instead."
+            )
 
-        # Write the request payload for local debugging without exposing the API key.
-        try:
-            debug_path = Path(__file__).resolve().parent / "fast2sms_debug.json"
-            with open(debug_path, "w", encoding="utf-8") as fh:
-                fh.write(json.dumps(request_params))
-        except Exception:
-            pass
+        request_params = build_fast2sms_bulk_request(normalized_phone, message, otp=otp)
+
+        logging.info("[OTP DEBUG] OTP generated")
+        logging.info("[OTP DEBUG] SMS provider request started")
+        logging.info("[AUTH] SMS provider: %s", SMS_PROVIDER.upper())
+        logging.info("[AUTH] SMS route: %s", SMS_ROUTE)
+        if SMS_ROUTE == "otp":
+            logging.info("[AUTH] SMS payload style: OTP route (variables_values + template_id)")
+        else:
+            logging.info("[AUTH] SMS payload style: transactional route (free-form message)")
+        if SMS_SENDER_ID and SMS_ROUTE != "q":
+            logging.info("[AUTH] SMS sender_id: %s (masked: %s)", SMS_SENDER_ID[:2] + "***" + SMS_SENDER_ID[-2:] if len(SMS_SENDER_ID) >= 4 else "***", "yes" if SMS_SENDER_ID else "no")
+        if SMS_TEMPLATE_ID:
+            logging.info("[AUTH] SMS template_id configured: %s", "yes")
+        if SMS_ENTITY_ID:
+            logging.info("[AUTH] SMS entity_id/pe_id configured: %s", "yes")
+        logging.info("[AUTH] SMS destination (masked): %s", "XXXXX" + normalized_phone[-5:] if len(normalized_phone) >= 5 else "***")
+
+        if OTP_MODE == "production":
+            if SMS_ROUTE == "otp" and not SMS_TEMPLATE_ID:
+                logging.warning("[AUTH] SMS_ROUTE=otp requires template_id. Delivery may fail.")
+            elif SMS_ROUTE != "q" and not SMS_TEMPLATE_ID:
+                logging.warning("[AUTH] SMS template_id is NOT configured. For DLT-compliant delivery in India, register and configure a template_id.")
+            if SMS_ROUTE != "q" and not SMS_ENTITY_ID:
+                logging.warning("[AUTH] SMS entity_id/pe_id is NOT configured. For DLT-compliant delivery in India, register and configure entity_id.")
 
         url = "https://www.fast2sms.com/dev/bulkV2"
         data = json.dumps(request_params).encode("utf-8")
@@ -232,6 +508,9 @@ def register_routes(app):
         }
         req = urllib_request.Request(url, data=data, headers=headers, method="POST")
 
+        logging.info("[AUTH] SMS API request: SENDING to Fast2SMS bulkV2 endpoint")
+        logging.info("[OTP DEBUG] Fast2SMS call starting")
+
         try:
             with urllib_request.urlopen(req, timeout=20) as response:
                 response_text = response.read().decode("utf-8", "ignore")
@@ -240,8 +519,17 @@ def register_routes(app):
                     response_json = json.loads(response_text)
                 except Exception:
                     response_json = response_text
-                logging.info("[AUTH] Fast2SMS HTTP status: %s", status_code)
-                logging.info("[AUTH] Fast2SMS response: %s", response_json)
+
+                safe_response = _sanitize_fast2sms_payload(response_json)
+                logging.info("[OTP DEBUG] Fast2SMS HTTP status: %s", status_code)
+                logging.info("[OTP DEBUG] Fast2SMS response: %s", safe_response)
+                success = is_fast2sms_success(response_json, status_code, response_text)
+                logging.info("[OTP DEBUG] Fast2SMS success decision: %s", str(success).lower())
+                logging.info("[OTP DEBUG] SMS provider response received")
+                logging.info("[OTP DEBUG] Provider HTTP status: %s", status_code)
+                logging.info("[AUTH] SMS provider response body (safe keys only): %s", safe_response)
+                logging.info("[OTP DEBUG] OTP request completed")
+
                 return {"status_code": status_code, "body": response_text}
         except urllib_error.HTTPError as exc:
             error_body = exc.read().decode("utf-8", "ignore")
@@ -249,11 +537,25 @@ def register_routes(app):
                 error_json = json.loads(error_body)
             except Exception:
                 error_json = error_body
-            logging.info("[AUTH] Fast2SMS HTTP status: %s", exc.code)
-            logging.info("[AUTH] Fast2SMS response: %s", error_json)
+
+            safe_err = _sanitize_fast2sms_payload(error_json)
+            logging.info("[OTP DEBUG] Fast2SMS HTTP status: %s", exc.code)
+            logging.info("[OTP DEBUG] Fast2SMS response: %s", safe_err)
+            logging.info("[OTP DEBUG] Fast2SMS success decision: %s", "false")
+            logging.info("[OTP DEBUG] SMS provider response received")
+            logging.info("[OTP DEBUG] Provider HTTP status: %s", exc.code)
+            logging.info("[AUTH] SMS provider error response (safe keys only): %s", safe_err)
+            logging.info("[OTP DEBUG] OTP request completed")
+
             raise RuntimeError(f"Fast2SMS request failed with HTTP {exc.code}: {error_body}") from exc
         except Exception as exc:
-            logging.info("[AUTH] Fast2SMS request failed: %s", str(exc))
+            logging.info("[OTP DEBUG] Fast2SMS HTTP status: %s", "error")
+            logging.info("[OTP DEBUG] Fast2SMS response: %s", str(exc)[:500])
+            logging.info("[OTP DEBUG] Fast2SMS success decision: %s", "false")
+            logging.info("[OTP DEBUG] SMS provider response received")
+            logging.info("[OTP DEBUG] Provider response: %s", str(exc)[:500])
+            logging.info("[AUTH] SMS provider request exception: %s: %s", type(exc).__name__, str(exc))
+            logging.info("[OTP DEBUG] OTP request completed")
             raise RuntimeError(f"Fast2SMS request failed: {exc}") from exc
 
     def _store_otp(phone, otp, session_id=None):
@@ -266,6 +568,15 @@ def register_routes(app):
             OTP_PHONE_LOOKUPS[phone] = session_id
 
         return session_id
+
+    def _delete_otp_session(session_id=None, phone=None):
+        with OTP_LOCK:
+            if session_id:
+                OTP_SESSIONS.pop(session_id, None)
+            if phone:
+                phone_session_id = OTP_PHONE_LOOKUPS.pop(phone, None)
+                if phone_session_id and phone_session_id != session_id:
+                    OTP_SESSIONS.pop(phone_session_id, None)
 
     def _get_otp_session(session_id=None, phone=None):
         now = int(datetime.now(timezone.utc).timestamp())
@@ -324,6 +635,9 @@ def register_routes(app):
     @api.route("/auth/send-otp", methods=["POST"])
     def send_otp():
         payload = request.get_json(silent=True) or {}
+        logging.info("[OTP DEBUG] send-otp request received")
+        logging.info("[AUTH] send-otp endpoint reached: payload keys=%s", sorted(payload.keys()))
+        logging.info("[AUTH] OTP_MODE value: %s", repr(OTP_MODE))
         name = (payload.get("name") or "").strip()
         email = (payload.get("email") or "").strip().lower()
         phone = (payload.get("phone") or "").strip()
@@ -334,28 +648,57 @@ def register_routes(app):
             return jsonify({"status": "error", "message": "Email is required"}), 400
         if not phone:
             return jsonify({"status": "error", "message": "Phone is required"}), 400
-        # Normalize/validate phone rather than requiring strict E.164 from the UI
         normalized_phone = _normalize_phone_for_sms(phone)
         if not normalized_phone:
             return jsonify({"status": "error", "message": "Phone number is invalid"}), 400
 
+        logging.info("[AUTH] send-otp called for phone (masked): %s", "XXXXX" + normalized_phone[-5:] if len(normalized_phone) >= 5 else "***")
+        logging.info("[AUTH] OTP generation started")
+
+        otp = random.randint(100000, 999999)
+        logging.info("[AUTH] OTP generation succeeded: generated 6-digit code (value NOT logged)")
+
+        if OTP_MODE == "development":
+            session_id = _store_otp(normalized_phone, otp)
+            logging.warning(
+                "[AUTH] OTP MODE = DEVELOPMENT. SMS provider call is BYPASSED. No real SMS sent. OTP stored in memory only."
+            )
+            logging.info("[AUTH] OTP storage started")
+            logging.info("[AUTH] OTP storage succeeded (session_id: %s...)", session_id[:4] + "***" if len(session_id) >= 4 else "***")
+            logging.info("[AUTH] Final send-otp decision: SUCCESS (MOCK / DEVELOPMENT MODE)")
+            return jsonify(
+                {
+                    "status": "success",
+                    "message": "OTP sent successfully in development mode (check backend logs)",
+                    "sessionId": session_id,
+                    "dev_otp": str(otp),
+                    "_otp_mode_debug": OTP_MODE,
+                }
+            )
+
         if not FAST_TO_SMS_API_KEY:
+            logging.error("[AUTH] OTP send failed: FAST_TO_SMS_API_KEY is not configured in backend/.env")
             return (
                 jsonify(
                     {
                         "status": "error",
-                        "message": "FAST_TO_SMS_API_KEY is not configured in backend/.env",
+                        "message": "SMS provider configuration is missing/invalid.",
+                        "requiredEnvVars": ["FAST_TO_SMS_API_KEY", "SMS_PROVIDER", "SMS_SENDER_ID", "SMS_ROUTE"],
                     }
                 ),
-                501,
+                503,
             )
 
-        otp = random.randint(100000, 999999)
+        session_id = _store_otp(normalized_phone, otp)
+        logging.info("[AUTH] OTP storage succeeded (session_id: %s...)", session_id[:4] + "***" if len(session_id) >= 4 else "***")
+
         try:
+            logging.info("[AUTH] OTP storage started")
             resp = _send_fast2sms_otp(normalized_phone, otp)
-            # Parse provider body safely for decision making
             status_code = None
+            body = None
             parsed = None
+
             if isinstance(resp, dict):
                 status_code = resp.get("status_code")
                 body = resp.get("body")
@@ -364,37 +707,61 @@ def register_routes(app):
                 except Exception:
                     parsed = None
 
-            # Determine success robustly: accept any 2xx HTTP status or provider success indicators
-            success = False
-            if status_code is not None:
-                try:
-                    status_int = int(status_code)
-                    if 200 <= status_int < 300:
-                        success = True
-                except Exception:
-                    pass
+            logging.info("[DEBUG] Fast2SMS response: status_code=%s, parsed=%s", status_code, parsed)
 
-            if parsed:
-                return_value = parsed.get("return")
-                if return_value in (True, "true", "True", "1", 1):
-                    success = True
-                if str(parsed.get("status", "")).lower() == "success":
-                    success = True
-                if parsed.get("request_id"):
-                    success = True
-
-            # Log safe debugging info (no API keys or OTPs)
-            logging.info("[AUTH] Fast2SMS debug - HTTP status: %s", status_code)
-            logging.info("[AUTH] Fast2SMS debug - response: %s", parsed)
-            logging.info("[AUTH] send-otp decision: %s", "SUCCESS" if success else "ERROR")
+            success = is_fast2sms_success(parsed, status_code, body)
+            logging.info("[AUTH] SMS provider response/status: status_code=%s parsed=%s", status_code, parsed)
+            logging.info("[AUTH] send-otp SMS delivery decision: %s", "SUCCESS" if success else "FAILED")
+            logging.info("[OTP DEBUG] Fast2SMS success decision: %s", str(success).lower())
 
             if not success:
-                # Surface provider message for debugging without exposing secrets
-                raise RuntimeError(f"Fast2SMS error: {parsed or body}")
+                _delete_otp_session(session_id=session_id, phone=normalized_phone)
+                error_message = format_fast2sms_error_message(parsed, status_code, body)
+                logging.error("[AUTH] SMS provider rejected the OTP request: %s", error_message)
+                logging.error("[AUTH] OTP storage: REMOVED (provider did not accept SMS)")
+                logging.error("[AUTH] Final send-otp decision: FAILED")
+                logging.info("[OTP DEBUG] Final Flask status: %s", 503)
+                return jsonify({
+                    "status": "error",
+                    "message": error_message,
+                    "provider": "fast2sms",
+                    "provider_status_code": status_code,
+                    "requiredEnvVars": ["FAST_TO_SMS_API_KEY", "SMS_PROVIDER", "SMS_SENDER_ID", "SMS_ROUTE"],
+                }), 503
         except RuntimeError as exc:
-            return jsonify({"status": "error", "message": str(exc)}), 502
+            _delete_otp_session(session_id=session_id, phone=normalized_phone)
+            logging.exception("[AUTH] SMS provider raised an exception while sending OTP")
+            logging.error("[AUTH] Final send-otp decision: FAILED (RuntimeError)")
+            message = str(exc)
+            lowered = message.lower()
+            if "wallet balance" in lowered or "insufficient wallet" in lowered:
+                provider_message = "Fast2SMS rejected the OTP request because the account wallet balance is insufficient."
+            elif "dnd" in lowered or "blocked" in lowered:
+                provider_message = "Fast2SMS rejected the OTP request because the destination number is blocked or DND restricted."
+            else:
+                provider_message = "Fast2SMS rejected the OTP request."
+            return jsonify({
+                "status": "error",
+                "message": provider_message,
+                "provider": "fast2sms",
+                "provider_error": message,
+                "requiredEnvVars": ["FAST_TO_SMS_API_KEY", "SMS_PROVIDER", "SMS_SENDER_ID", "SMS_ROUTE"],
+            }), 503
+        except Exception:
+            _delete_otp_session(session_id=session_id, phone=normalized_phone)
+            logging.exception("[AUTH] Unexpected OTP send failure")
+            logging.error("[AUTH] Final send-otp decision: FAILED (Unexpected)")
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Unexpected backend error during OTP send.",
+                    "provider": "fast2sms",
+                    "requiredEnvVars": ["FAST_TO_SMS_API_KEY", "SMS_PROVIDER", "SMS_SENDER_ID", "SMS_ROUTE"],
+                }
+            ), 503
 
-        session_id = _store_otp(normalized_phone, otp)
+        logging.info("[AUTH] Final send-otp decision: SUCCESS - SMS sent via provider and OTP stored for verification")
+        logging.info("[OTP DEBUG] Final Flask status: %s", 200)
         return jsonify({"status": "success", "message": "OTP sent successfully", "sessionId": session_id})
 
     @api.route("/auth/verify-otp", methods=["POST"])
@@ -414,13 +781,19 @@ def register_routes(app):
             return jsonify({"status": "error", "message": "Phone is required"}), 400
         if not otp:
             return jsonify({"status": "error", "message": "OTP is required"}), 400
-        # Normalize the phone for lookup
         normalized_phone = _normalize_phone_for_sms(phone)
         if not normalized_phone:
             return jsonify({"status": "error", "message": "Phone number is invalid"}), 400
 
+        logging.info("[AUTH] verify-otp called for phone (masked): %s", "XXXXX" + normalized_phone[-5:] if len(normalized_phone) >= 5 else "***")
+        logging.info("[AUTH] verify-otp session_id provided: %s", "yes" if session_id else "no")
+        logging.info("[AUTH] verify-otp OTP length: %s digits", len(otp))
+
         if not _consume_otp_session(session_id=session_id, phone=normalized_phone, otp=otp):
+            logging.warning("[AUTH] OTP verification: FAILED (wrong OTP, expired, or already consumed)")
             return jsonify({"status": "error", "message": "OTP is invalid or expired"}), 400
+
+        logging.info("[AUTH] OTP verification: SUCCESS (correct, not expired, now consumed)")
 
         user_payload = {
             "uid": f"phone-{normalized_phone}",
@@ -429,7 +802,9 @@ def register_routes(app):
             "phone": normalized_phone,
             "provider": "phone",
         }
-        return create_or_update_user(user_payload)
+        result = create_or_update_user(user_payload)
+        logging.info("[AUTH] User create/update: COMPLETE after OTP verification")
+        return result
 
     @api.route("/auth/login", methods=["POST"])
     def login_user():
@@ -469,7 +844,57 @@ def register_routes(app):
             )
 
         payload = request.get_json(silent=True) or {}
-        return create_or_update_user(payload)
+        firebase_id_token = (payload.get("idToken") or payload.get("token") or "").strip()
+
+        if not firebase_id_token:
+            legacy_google_payload = {
+                "uid": payload.get("uid") or payload.get("user_id") or "",
+                "name": payload.get("name") or "Google User",
+                "email": (payload.get("email") or "").strip().lower(),
+                "provider": "google",
+                "photoURL": payload.get("photoURL") or payload.get("picture") or "",
+            }
+            if legacy_google_payload["uid"] and legacy_google_payload["email"]:
+                return create_or_update_user(legacy_google_payload)
+            return jsonify({
+                "status": "error",
+                "message": "Firebase Google ID token is missing or invalid.",
+            }), 401
+
+        try:
+            decoded_firebase_user = _verify_firebase_id_token(firebase_id_token)
+        except RuntimeError as exc:
+            logging.exception("Google Firebase token verification setup error")
+            return jsonify({
+                "status": "error",
+                "message": str(exc),
+            }), 503
+        except ValueError as exc:
+            return jsonify({
+                "status": "error",
+                "message": str(exc),
+            }), 401
+
+        email = (decoded_firebase_user.get("email") or payload.get("email") or "").strip().lower()
+        name = (decoded_firebase_user.get("name") or payload.get("name") or "Google User").strip()
+        if not name:
+            name = (decoded_firebase_user.get("firebase", {}).get("sign_in_provider") or "Google User")
+        photo_url = (decoded_firebase_user.get("picture") or payload.get("photoURL") or payload.get("picture") or "").strip()
+        provider_uid = decoded_firebase_user.get("uid") or payload.get("uid") or email or secrets.token_hex(8)
+
+        user_payload = {
+            "uid": f"google-{provider_uid}",
+            "name": name,
+            "email": email,
+            "provider": "google",
+            "photoURL": photo_url,
+        }
+
+        result = create_or_update_user(user_payload)
+        if isinstance(result, tuple):
+            response_obj, status_code = result
+            return response_obj, status_code
+        return result
 
     @api.route("/auth/google/callback", methods=["GET"])
     def google_auth_callback():

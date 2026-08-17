@@ -1,319 +1,266 @@
-/* ===== FOURISE FOOTER - MAIN CONTAINER ===== */
-.fourise-footer {
-  position: relative;
+/* ===== FOOTER CONTAINER ===== */
+.footer-container {
   width: 100%;
-  background: linear-gradient(135deg, #3d6b8f 0%, #4a7ba7 100%);
-  color: #ffffff;
+  background: #2A170F;
+  color: #FFF8F6;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  padding: 3.5rem 1.5rem 2rem;
-  margin-top: auto;
-  overflow: hidden;
+  padding: 0;
 }
 
-.footer-container {
+/* Orange top accent */
+.footer-top-accent {
+  height: 3px;
+  background: #E67E22;
+  width: 100%;
+}
+
+/* Main footer content */
+.footer-content {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 40px 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 3rem;
-  position: relative;
-  z-index: 2;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
 }
 
-/* ===== FOOTER SECTIONS ===== */
-.footer-section {
+/* Footer columns */
+.footer-column {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 12px;
 }
 
-.footer-section-title {
-  font-size: 1.05rem;
+/* Brand column */
+.footer-brand {
+  gap: 8px;
+}
+
+.footer-brand-name {
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #ffffff;
+  letter-spacing: 1.5px;
+  color: #E67E22;
   margin: 0;
-  text-transform: uppercase;
-  border-bottom: 2px solid #f0a84d;
-  padding-bottom: 0.75rem;
-}
-
-/* ===== BRAND SECTION ===== */
-.footer-brand-section {
-  gap: 1rem;
-}
-
-.footer-brand-logo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.fourise-logo {
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: #f0a84d;
   line-height: 1.2;
 }
 
-.fourise-tagline {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: #cce0f0;
-  letter-spacing: 1px;
+.footer-brand-tagline {
+  font-size: 12px;
+  font-weight: 600;
+  color: #DCC1B1;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
-.footer-brand-description {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #e0e8f0;
+.footer-brand-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #DCC1B1;
   margin: 0;
 }
 
-/* ===== CONTACT SECTION ===== */
-.footer-contact-grid {
+/* Section headings */
+.footer-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #FFF8F6;
+  margin: 0;
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 248, 246, 0.18);
+}
+
+/* Contact list */
+.footer-contact-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 12px;
 }
 
-.contact-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.contact-icon {
-  flex-shrink: 0;
-  font-size: 1.5rem;
-  color: #f0a84d;
-  margin-top: 0.25rem;
-}
-
-.contact-content {
+.contact-row {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 4px;
 }
 
 .contact-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #f0a84d;
+  font-size: 11px;
+  font-weight: 600;
+  color: #E67E22;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
-.contact-link {
-  font-size: 0.95rem;
-  color: #ffffff;
+.contact-value {
+  font-size: 13px;
+  color: #FFF8F6;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
   word-break: break-word;
 }
 
-.contact-link:hover {
-  color: #f0a84d;
-  text-decoration: underline;
+.contact-value:hover {
+  color: #E67E22;
 }
 
-.contact-text {
-  font-size: 0.95rem;
-  color: #ffffff;
-  line-height: 1.5;
-}
-
-/* ===== CORPORATE INFORMATION SECTION ===== */
-.corporate-info-grid {
+/* Corporate list */
+.footer-corporate-list {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 12px;
 }
 
-.corporate-info-item {
+.corporate-row {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .corporate-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #f0a84d;
+  font-size: 11px;
+  font-weight: 600;
+  color: #E67E22;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
 .corporate-value {
-  font-size: 0.95rem;
-  color: #ffffff;
-  font-weight: 500;
+  font-size: 13px;
+  color: #FFF8F6;
   font-family: 'Courier New', monospace;
   word-break: break-all;
 }
 
-/* ===== LINKS SECTION ===== */
-.footer-links-grid {
+/* Links list */
+.footer-links-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 10px;
 }
 
 .footer-link {
-  font-size: 0.95rem;
-  color: #e0e8f0;
+  font-size: 13px;
+  color: #DCC1B1;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
   border-left: 2px solid transparent;
-  padding-left: 0.75rem;
+  padding-left: 8px;
 }
 
 .footer-link:hover {
-  color: #f0a84d;
-  border-left-color: #f0a84d;
+  color: #E67E22;
+  border-left-color: #E67E22;
 }
 
-/* ===== FOOTER BOTTOM ===== */
-.footer-bottom {
+/* Divider */
+.footer-divider {
   max-width: 1280px;
-  margin: 2.5rem auto 0;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  z-index: 2;
+  margin: 0 auto;
+  height: 1px;
+  background: rgba(255, 248, 246, 0.18);
 }
 
-.footer-bottom-content {
+/* Copyright section */
+.footer-copyright {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px;
   text-align: center;
 }
 
-.footer-copyright {
-  font-size: 0.9rem;
-  color: #e0e8f0;
-  margin: 0 0 0.5rem;
+.copyright-text {
+  font-size: 12px;
+  color: #DCC1B1;
+  margin: 0 0 8px;
+  line-height: 1.4;
 }
 
-.footer-disclaimer {
-  font-size: 0.85rem;
-  color: #b8c8d8;
+.copyright-disclaimer {
+  font-size: 11px;
+  color: #876D60;
   margin: 0;
-}
-
-/* ===== DECORATIVE ACCENT SHAPE ===== */
-.footer-accent-shape {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 300px;
-  height: 300px;
-  background: linear-gradient(135deg, #f0a84d 0%, #f0a84d 50%, transparent 100%);
-  opacity: 0.15;
-  clip-path: polygon(100% 0, 100% 100%, 0% 100%);
-  pointer-events: none;
-  z-index: 1;
+  line-height: 1.4;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
 
-/* TABLET (768px and below) */
-@media (max-width: 768px) {
-  .fourise-footer {
-    padding: 2.5rem 1.5rem 1.5rem;
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    padding: 32px 20px;
   }
 
-  .footer-container {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 2rem;
+  .footer-heading {
+    font-size: 10px;
+    padding-bottom: 6px;
   }
 
-  .footer-section-title {
-    font-size: 0.95rem;
+  .footer-brand-name {
+    font-size: 18px;
   }
 
-  .fourise-logo {
-    font-size: 1.5rem;
-  }
-
-  .fourise-tagline {
-    font-size: 0.8rem;
-  }
-
-  .contact-icon {
-    font-size: 1.25rem;
-  }
-
-  .footer-accent-shape {
-    width: 200px;
-    height: 200px;
+  .contact-value,
+  .footer-link {
+    font-size: 12px;
   }
 }
 
-/* MOBILE (480px and below) */
-@media (max-width: 480px) {
-  .fourise-footer {
-    padding: 2rem 1rem 1.5rem;
-  }
-
-  .footer-container {
+/* Small tablet (600px - 768px) */
+@media (max-width: 768px) {
+  .footer-content {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
+    gap: 24px;
+    padding: 28px 16px;
   }
 
-  .footer-section-title {
-    font-size: 0.9rem;
+  .footer-brand-name {
+    font-size: 16px;
   }
 
-  .fourise-logo {
-    font-size: 1.4rem;
-    letter-spacing: 1.5px;
+  .footer-heading {
+    font-size: 10px;
   }
 
-  .fourise-tagline {
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
+  .contact-value,
+  .footer-link,
+  .footer-brand-desc {
+    font-size: 12px;
+  }
+}
+
+/* Mobile (< 600px) */
+@media (max-width: 600px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 24px 16px;
   }
 
-  .footer-brand-description {
-    font-size: 0.9rem;
-    line-height: 1.5;
+  .footer-brand-name {
+    font-size: 16px;
+    letter-spacing: 1px;
   }
 
-  .contact-item {
-    gap: 0.85rem;
+  .footer-heading {
+    font-size: 10px;
   }
 
-  .contact-icon {
-    font-size: 1.1rem;
+  .contact-value,
+  .footer-link,
+  .copyright-text {
+    font-size: 12px;
   }
 
-  .contact-label,
-  .corporate-label {
-    font-size: 0.8rem;
-  }
-
-  .contact-link,
-  .contact-text,
-  .corporate-value,
-  .footer-link {
-    font-size: 0.9rem;
-  }
-
-  .footer-bottom {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
+  .copyright-disclaimer {
+    font-size: 10px;
   }
 
   .footer-copyright {
-    font-size: 0.85rem;
-  }
-
-  .footer-disclaimer {
-    font-size: 0.8rem;
-  }
-
-  .footer-accent-shape {
-    width: 150px;
-    height: 150px;
+    padding: 16px;
   }
 }

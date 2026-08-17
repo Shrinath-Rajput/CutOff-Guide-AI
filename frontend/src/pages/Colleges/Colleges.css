@@ -1,5 +1,7 @@
 .colleges-page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #faf9f6;
   color: #1a1c1a;
   font-family: 'Inter', sans-serif;
@@ -85,9 +87,11 @@
 }
 
 .colleges-main {
+  flex: 1 0 auto;
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 160px 40px 64px;
+  padding: 160px 40px 48px;
 }
 
 .colleges-header {
@@ -151,6 +155,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+  min-height: 0;
 }
 
 .filters-sidebar {
@@ -159,8 +164,10 @@
 
 .results-column {
   display: flex;
+  flex: 1 0 auto;
   flex-direction: column;
   gap: 24px;
+  min-height: 0;
 }
 
 .filters-sidebar,
@@ -340,6 +347,55 @@
 .cards-list {
   display: grid;
   gap: 24px;
+  min-height: 0;
+}
+
+.cards-list.empty-state {
+  min-height: 260px;
+}
+
+.empty-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 32px 24px;
+  border: 1px solid #e2bfb0;
+  border-radius: 24px;
+  background: #ffffff;
+  text-align: center;
+  color: #5a4136;
+}
+
+.empty-results-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #ffdbcc;
+  color: #a04100;
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+
+.empty-results h3 {
+  font-family: 'Newsreader', serif;
+  font-size: 30px;
+  line-height: 38px;
+  margin: 0 0 8px;
+  color: #1a1c1a;
+}
+
+.empty-results p {
+  max-width: 480px;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: #5a4136;
 }
 
 .college-card {

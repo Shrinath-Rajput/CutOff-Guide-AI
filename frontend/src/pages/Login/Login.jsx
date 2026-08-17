@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signInWithPopup } from 'firebase/auth';
 import toast from 'react-hot-toast';
-import { sendOtp, verifyOtp } from '../../services/api';
+import { sendOtp, verifyOtp, googleAuth } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { auth, googleProvider } from '../../firebase';
 import './Login.css';
 
 const Login = () => {
@@ -233,26 +235,52 @@ const Login = () => {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleSigning(true);
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-    const url = `${apiBase}/api/auth/google`;
 
     try {
-      const resp = await fetch(url, { method: 'GET', credentials: 'include', redirect: 'manual' });
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result?.user;
 
-      if (resp && resp.status === 501) {
-        const data = await resp.json().catch(() => null);
-        const message =
-          (data && data.message) || 'Google sign-in is not configured yet. Please contact the administrator.';
-        toast.error(message);
-        return;
+      if (!firebaseUser) {
+        throw new Error('Google sign-in did not return a valid user.');
       }
 
-      window.location.href = url;
-    } catch (err) {
-      try {
-        window.location.href = url;
-      } catch (e) {
-        toast.error('Google sign-in is not configured yet. Please contact the administrator.');
+      const idToken = await firebaseUser.getIdToken();
+      const response = await googleAuth({
+        idToken,
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || 'Google User',
+        email: firebaseUser.email || '',
+        provider: 'google',
+        photoURL: firebaseUser.photoURL || '',
+      });
+
+      const backendUser = response?.user;
+      const token = response?.token;
+
+      if (!backendUser || !token) {
+        throw new Error(response?.message || 'Google sign-in failed. Please try again.');
+      }
+
+      login(backendUser, token);
+      toast.success('Google login successful');
+      setTimeout(() => navigate('/onboarding'), 600);
+    } catch (error) {
+      console.error('Google sign-in error', error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Google sign-in failed. Please try again or use phone OTP.';
+
+      if (
+        error?.code === 'auth/popup-closed-by-user' ||
+        error?.code === 'auth/cancelled-popup-request'
+      ) {
+        toast.error('Google sign-in was cancelled.');
+      } else if (error?.code === 'auth/popup-blocked') {
+        toast.error('Google popup was blocked. Please allow popups and try again.');
+      } else {
+        toast.error(errorMessage);
       }
     } finally {
       setIsGoogleSigning(false);

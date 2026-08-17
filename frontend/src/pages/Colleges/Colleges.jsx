@@ -75,6 +75,7 @@ const Colleges = () => {
 
   const displayStart = collegeItems.length ? (currentPage - 1) * 10 + 1 : 0;
   const displayEnd = collegeItems.length ? Math.min(currentPage * 10, totalCollegeCount) : 0;
+  const hasResults = collegeItems.length > 0;
 
   const getDisplayedPages = () => {
     const pages = [];
@@ -254,75 +255,83 @@ const Colleges = () => {
               </div>
             </div>
 
-            <div className="cards-list">
-              {collegeItems.map((college) => (
-                <article key={college.id} className="college-card">
-                  <div className="card-image">
-                    <img src={college.image} alt={college.name} />
-                    <div className="card-badge">#{college.rank} National Rank</div>
-                    <button
-                      type="button"
-                      className="bookmark-button"
-                      onClick={() => toggleBookmark(college.id)}
-                      aria-label={bookmarked[college.id] ? 'Remove bookmark' : 'Bookmark college'}
-                    >
-                      <span className="material-symbols-outlined">
-                        {bookmarked[college.id] ? 'bookmark' : 'bookmark_border'}
-                      </span>
-                    </button>
-                  </div>
-
-                  <div className="card-content">
-                    <div>
-                      <div className="card-header-row">
-                        <h3>{college.name}</h3>
-                        <div className="card-rating">
-                          <span className="material-symbols-outlined rating-icon" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            star
-                          </span>
-                          <span>{college.rating}</span>
-                        </div>
-                      </div>
-                      <p className="card-location">
-                        <span className="material-symbols-outlined">location_on</span>
-                        {college.location}
-                      </p>
-                      <div className="card-stats">
-                        <div className="stat-block">
-                          <p className="stat-label">Top Courses</p>
-                          <p className="stat-value">{college.courses.join(', ')}</p>
-                        </div>
-                        <div className="stat-block">
-                          <p className="stat-label">Approx Fees</p>
-                          <p className="stat-value">{college.feeLabel}</p>
-                        </div>
-                        <div className="stat-block stat-block-highlight">
-                          <p className="stat-label">Avg. Cutoff Percentile</p>
-                          <p className="stat-value stat-value-strong">{college.cutoff}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="card-footer-row">
-                      <label className={`compare-label ${compareSelected[college.id] ? 'selected' : ''}`}>
-                        <input
-                          type="checkbox"
-                          checked={!!compareSelected[college.id]}
-                          onChange={() => toggleCompare(college.id)}
-                          disabled={!compareSelected[college.id] && selectedCompareCount >= 4}
-                        />
-                        <span className="compare-checkbox-box">
-                          <span className="material-symbols-outlined">check</span>
+            <div className={`cards-list ${hasResults ? '' : 'empty-state'}`}>
+              {hasResults ? (
+                collegeItems.map((college) => (
+                  <article key={college.id} className="college-card">
+                    <div className="card-image">
+                      <img src={college.image} alt={college.name} />
+                      <div className="card-badge">#{college.rank} National Rank</div>
+                      <button
+                        type="button"
+                        className="bookmark-button"
+                        onClick={() => toggleBookmark(college.id)}
+                        aria-label={bookmarked[college.id] ? 'Remove bookmark' : 'Bookmark college'}
+                      >
+                        <span className="material-symbols-outlined">
+                          {bookmarked[college.id] ? 'bookmark' : 'bookmark_border'}
                         </span>
-                        <span>Compare</span>
-                      </label>
-                      <Link to={`/college/${college.id}`} className="view-college-button">
-                        View College
-                      </Link>
+                      </button>
                     </div>
-                  </div>
-                </article>
-              ))}
+
+                    <div className="card-content">
+                      <div>
+                        <div className="card-header-row">
+                          <h3>{college.name}</h3>
+                          <div className="card-rating">
+                            <span className="material-symbols-outlined rating-icon" style={{ fontVariationSettings: "'FILL' 1" }}>
+                              star
+                            </span>
+                            <span>{college.rating}</span>
+                          </div>
+                        </div>
+                        <p className="card-location">
+                          <span className="material-symbols-outlined">location_on</span>
+                          {college.location}
+                        </p>
+                        <div className="card-stats">
+                          <div className="stat-block">
+                            <p className="stat-label">Top Courses</p>
+                            <p className="stat-value">{college.courses.join(', ')}</p>
+                          </div>
+                          <div className="stat-block">
+                            <p className="stat-label">Approx Fees</p>
+                            <p className="stat-value">{college.feeLabel}</p>
+                          </div>
+                          <div className="stat-block stat-block-highlight">
+                            <p className="stat-label">Avg. Cutoff Percentile</p>
+                            <p className="stat-value stat-value-strong">{college.cutoff}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="card-footer-row">
+                        <label className={`compare-label ${compareSelected[college.id] ? 'selected' : ''}`}>
+                          <input
+                            type="checkbox"
+                            checked={!!compareSelected[college.id]}
+                            onChange={() => toggleCompare(college.id)}
+                            disabled={!compareSelected[college.id] && selectedCompareCount >= 4}
+                          />
+                          <span className="compare-checkbox-box">
+                            <span className="material-symbols-outlined">check</span>
+                          </span>
+                          <span>Compare</span>
+                        </label>
+                        <Link to={`/college/${college.id}`} className="view-college-button">
+                          View College
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <div className="empty-results">
+                  <div className="empty-results-icon material-symbols-outlined">search_off</div>
+                  <h3>No colleges found</h3>
+                  <p>Try widening your search or clearing a few filters to see more results.</p>
+                </div>
+              )}
             </div>
 
             <div className="pagination">
